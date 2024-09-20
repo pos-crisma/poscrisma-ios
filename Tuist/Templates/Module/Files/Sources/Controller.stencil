@@ -1,0 +1,12 @@
+//
+//  {{ name }}Controller.swift
+//  Poscrisma
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+import UIKit
+
+extension {{ name }} {
+    struct Controller { }
+}

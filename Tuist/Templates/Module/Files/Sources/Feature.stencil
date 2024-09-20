@@ -1,0 +1,8 @@
+//
+//  {{ name }}.swift
+//  Poscrisma
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+enum {{ name }} { }
