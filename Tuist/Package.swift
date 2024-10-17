@@ -17,5 +17,6 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.9"),
     .package(url: "https://github.com/pointfreeco/swift-navigation", from: "2.2.0"),
     .package(url: "https://github.com/airbnb/epoxy-ios", branch: "master"),
+    .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.7.1")
   ]
 )

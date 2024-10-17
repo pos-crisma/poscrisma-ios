@@ -14,9 +14,7 @@ struct PoscrismaApp: App {
     
     var body: some Scene {
         WindowGroup {
-            UIViewControllerRepresenting {
-                Airbnb.ViewController()
-            }
+            BackgroundView()
             .ignoresSafeArea()
         }
     }

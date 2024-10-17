@@ -23,7 +23,7 @@ extension Manager.Firebase: TestDependencyKey {
     public static let previewValue = Self.noop
     
     public static let testValue = Self(
-        configure: unimplemented("\(Self.self).configure")
+        configure: unimplemented(placeholder: ())
     )
 }
 

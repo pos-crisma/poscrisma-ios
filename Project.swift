@@ -27,6 +27,7 @@ let project = Project(
         .external(name: "AppKitNavigation"),    // AppKitNavigation from swift-navigation
         .external(name: "SwiftUINavigation"),   // SwiftUINavigation from swift-navigation
         .external(name: "UIKitNavigation"),     // UIKitNavigation from swift-navigation
+        .external(name: "SnapKit")
       ],
       settings: .settings(configurations: [
         .debug(name: "Debug", xcconfig: "./xcconfigs/Poscrisma.xcconfig"), 

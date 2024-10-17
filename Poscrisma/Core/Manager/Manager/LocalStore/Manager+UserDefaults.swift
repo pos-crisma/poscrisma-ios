@@ -101,7 +101,7 @@ extension Manager.UserDefaultsClient: DependencyKey {
         dataForKey: unimplemented("\(Self.self).dataForKey", placeholder: nil),
         doubleForKey: unimplemented("\(Self.self).doubleForKey", placeholder: 0),
         integerForKey: unimplemented("\(Self.self).integerForKey", placeholder: 0),
-        stringForKey: unimplemented("\(Self.self).stringForKey"),
+        stringForKey: unimplemented("\(Self.self).stringForKey", placeholder: ""),
         remove: unimplemented("\(Self.self).remove"),
         setBool: unimplemented("\(Self.self).setBool"),
         setData: unimplemented("\(Self.self).setData"),
