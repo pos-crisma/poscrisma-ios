@@ -19,7 +19,7 @@ extension Login {
                     controller.goToFeatureModal(with: $0)
                 }
                 
-                ForegroundView {
+                ForegroundView(isLoading: controller.isLoading) {
                     controller.startGoogleAuthentication()
                 }
                 .padding(.bottom)

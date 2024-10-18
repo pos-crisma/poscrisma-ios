@@ -5,13 +5,14 @@
 //  Created by Rodrigo Souza on 15/10/2024.
 //
 
-import UIKit
+import SwiftUI
 import SwiftUINavigation
 
 extension Login {
     
     @Observable
     class Controller {
+        var isLoading = false
         var isLogged = false
         var destination: Destination?
         let tiles: [Int: TileData] = tileDataMock
@@ -28,9 +29,13 @@ extension Login {
         
         
         func startGoogleAuthentication() {
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(1))
-                isLogged = true
+            withAnimation {
+                isLoading = true
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(1))
+                    isLogged = true
+                    isLoading = false
+                }
             }
         }
     }

@@ -10,9 +10,11 @@ import SwiftUI
 
 extension Login {
     struct ForegroundView: View {
+        let isLoading: Bool
         let handler: () -> Void
         
-        init(handler: @escaping () -> Void) {
+        init(isLoading: Bool, handler: @escaping () -> Void) {
+            self.isLoading = isLoading
             self.handler = handler
         }
         
@@ -62,14 +64,20 @@ extension Login {
                             handler()
                         } label: {
                             HStack(spacing: 8) {
-                                Image(systemName: "plus")
-                                    .font(.body)
-                                    .fontWeight(.heavy)
+                                if isLoading {
+                                    ProgressView()
+                                } else {
+                                    Image(systemName: "plus")
+                                        .font(.body)
+                                        .fontWeight(.heavy)
+                                    
+                                    Text("Continua com Google")
+                                        .font(.body)
+                                        .fontWeight(.bold)
+                                }
                                 
-                                Text("Continua com Google")
-                                    .font(.body)
-                                    .fontWeight(.bold)
                             }
+                            .disabled(isLoading)
                             .foregroundStyle(.white)
                             .frame(height: 44)
                             .frame(maxWidth: .infinity)
