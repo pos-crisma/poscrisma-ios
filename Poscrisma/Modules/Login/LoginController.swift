@@ -17,6 +17,12 @@ extension Login {
         var destination: Destination?
         let tiles: [Int: TileData] = tileDataMock
         
+        init(isLoading: Bool = false, isLogged: Bool = false, destination: Destination? = nil) {
+            self.isLoading = isLoading
+            self.isLogged = isLogged
+            self.destination = destination
+        }
+        
         @CasePathable
         enum Destination {
             case showFeature(TileData)
@@ -29,14 +35,7 @@ extension Login {
         
         
         func startGoogleAuthentication() {
-            withAnimation {
-                isLoading = true
-                Task { @MainActor in
-                    try? await Task.sleep(for: .seconds(1))
-                    isLogged = true
-                    isLoading = false
-                }
-            }
+            isLogged = true
         }
     }
 }

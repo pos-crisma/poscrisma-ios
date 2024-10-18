@@ -39,14 +39,24 @@ extension Login {
                     VStack(spacing: 0) {
                         Spacer()
                         
-                        // Meet Acamps Text
-                        Text("Conheça Acamps")
-                            .font(.system(size: 25, weight: .semibold))
-                            .kerning(-0.43)
-                            .foregroundColor(Color(red: 0.09, green: 0.09, blue: 0.09))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.bottom, 20)
-                            .allowsHitTesting(false)
+                        // Meet Acamps Text with Arrow and Message Bubble
+                        ZStack(alignment: .bottom) {
+                            Text("Conheça Acamps")
+                                .font(.system(size: 25, weight: .semibold))
+                                .foregroundColor(Color(red: 0.09, green: 0.09, blue: 0.09))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            VStack {
+                                MessageBubble()
+                                    .frame(width: 60, height: 60)
+                                Arrow()
+                                    .offset(x: -12, y: -4)
+                                    .frame(width: 40, height: 40)
+                            }
+                            .offset(x: geometry.size.width * 0.2)
+                        }
+                        .padding(.bottom, 16)
+                        .allowsHitTesting(false)
                         
                         // Promo Text
                         Text("Facilidade na gestão de acampamentos")
@@ -58,7 +68,6 @@ extension Login {
                             .allowsHitTesting(false)
                         
                         // Custom Button
-                        
                         Button {
                             Manager.Haptic.shared.playHaptic(for: .impact(.medium))
                             handler()
@@ -75,19 +84,16 @@ extension Login {
                                         .font(.body)
                                         .fontWeight(.bold)
                                 }
-                                
                             }
-                            .disabled(isLoading)
                             .foregroundStyle(.white)
-                            .frame(height: 44)
+                            .frame(height: 54)
                             .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .foregroundStyle(.black)
                             )
                         }
+                        .disabled(isLoading)
                         .padding(.bottom, 8)
                         .buttonStyle(.scale)
                         
@@ -97,26 +103,12 @@ extension Login {
                             .kerning(0.20)
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .multilineTextAlignment(.center)
-                            
-                            .padding(.bottom, 40)
                             .allowsHitTesting(false)
+                            .padding(.bottom, 16)
                     }
-                    .padding(.horizontal, 32)
-                    
-                    // Arrow and Message Bubble
-                    VStack {
-                        MessageBubble()
-                            .offset(x: 50, y: -geometry.size.height * 0.3)
-                        
-                        Arrow()
-                            .offset(x: 50, y: -geometry.size.height * 0.27)
-                    }
-                    .allowsHitTesting(false)
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                    
+                    .padding(.horizontal, 24)
                 }
             }
-            .edgesIgnoringSafeArea(.all)
         }
     }
 
@@ -177,25 +169,23 @@ extension Login {
                     
                     Circle()
                         .fill(Color.green.opacity(0.2))
-                        .frame(width: 30, height: 30)
+                        .frame(width: 45, height: 45)
                     
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Ei você,")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(Color(red: 0.392, green: 0.765, blue: 0.529))
                         
-                        Text("Convite para o acamps")
+                        Text("Acamps 2024")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(Color(red: 0.086, green: 0.639, blue: 0.290))
                     }
-                    
-                    Spacer(minLength: 22)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
             }
-            .frame(width: 300, height: 50)
-            .rotationEffect(.degrees(32.85))
+            .frame(width: 200, height: 50)
+            .rotationEffect(.degrees(26.85))
             .scaleEffect(scale)
             .animation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true), value: scale)
             .onAppear {

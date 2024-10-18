@@ -30,6 +30,7 @@ extension Home {
             Essas mudanças garantem que seus labels respeitem a *Safe Area*, evitando que fiquem sob a barra de status, o notch (se houver) ou outros elementos da interface do sistema.
             Gostaria que eu explicasse mais algum detalhe ou fizesse alguma outra modificação?
             """
+            label.textColor = .black
             label.numberOfLines = 0
             return label
         }()
@@ -46,6 +47,7 @@ extension Home {
             Essas mudanças garantem que seus labels respeitem a *Safe Area*, evitando que fiquem sob a barra de status, o notch (se houver) ou outros elementos da interface do sistema.
             Gostaria que eu explicasse mais algum detalhe ou fizesse alguma outra modificação?
             """
+            label.textColor = .black
             label.numberOfLines = 0
             label.backgroundColor = .gray.withAlphaComponent(0.1)
             return label
@@ -99,7 +101,7 @@ extension Home {
                 make.top.equalTo(labelContent.snp.bottom).offset(16)
                 make.left.equalTo(view.snp.left).offset(16)
                 make.right.equalTo(view.snp.right).offset(-16)
-                make.height.equalTo(44)
+                make.height.equalTo(54)
             }
             
             trailingContent.snp.makeConstraints { make in

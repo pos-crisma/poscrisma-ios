@@ -78,6 +78,7 @@ enum Style {
         }
         
         @objc private func executeAction() {
+            Manager.Haptic.shared.playHaptic(for: .impact(.medium))
             action?()
         }
     }

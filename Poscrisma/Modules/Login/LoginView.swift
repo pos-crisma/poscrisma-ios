@@ -22,7 +22,6 @@ extension Login {
                 ForegroundView(isLoading: controller.isLoading) {
                     controller.startGoogleAuthentication()
                 }
-                .padding(.bottom)
             }
             .sheet(item: $controller.destination.showFeature) { $item in
                 

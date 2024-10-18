@@ -16,24 +16,18 @@ extension Root {
         var homeController: Home.Controller?
         
         func onInitController() {
-            withAnimation {
-                homeController = nil
-                loginController = .init()
-            }
+            homeController = nil
+            loginController = .init(isLogged: false)
         }
         
         func handlerSuccessLogin() {
-            withAnimation {
-                homeController = .init()
-                loginController = nil
-            }
+            homeController = .init(isLogout: false)
+            loginController = nil
         }
         
         func handlerLogout() {
-            withAnimation {
-                homeController = nil
-                loginController = .init()
-            }
+            homeController = nil
+            loginController = .init(isLogged: false)
         }
     }
 }
