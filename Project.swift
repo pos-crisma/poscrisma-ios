@@ -12,7 +12,7 @@ let project = Project(
       destinations: .iOS, 
       product: .app,
       bundleId: "com.poscrisma.app.Poscrisma",
-      deploymentTargets: .iOS("16.0"),
+      deploymentTargets: .iOS("17.0"),
       sources: ["Poscrisma/**"],
       resources: [
         "Poscrisma/Resources/Assets.xcassets/**",
