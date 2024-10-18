@@ -8,5 +8,12 @@
 import UIKit
 
 extension Home {
-    struct Controller { }
+    @Observable
+    class Controller {
+        var isLogout = false
+        
+        func setLogout() {
+            isLogout = true
+        }
+    }
 }

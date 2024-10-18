@@ -27,6 +27,9 @@ extension Root {
                     UIViewControllerRepresenting {
                         Home.ViewController(controller: homeController)
                     }
+                    .onChange(of: homeController.isLogout) { _, newValue in
+                        if newValue { controller.handlerLogout() }
+                    }
                 }
             }
             .onAppear(perform: controller.onInitController)

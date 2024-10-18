@@ -56,6 +56,23 @@ extension Home {
             view.backgroundColor = .cyan
             return view
         }()
+        
+        lazy var buttonLogout: Style.ScaleButton = {
+            let label = UILabel()
+            label.text = "Logout"
+            label.font = .systemFont(ofSize: 16, weight: .bold)
+            label.textColor = .white
+            label.textAlignment = .center
+            
+            let button = Style.ScaleButton()
+            button.setAction(handlerLogout)
+            button.setCustomContent(label)
+            
+            button.backgroundColor = .black
+            button.layer.cornerRadius = 8
+
+            return button
+        }()
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -64,17 +81,25 @@ extension Home {
             view.addSubview(trailingContent)
             view.addSubview(labelTitle)
             view.addSubview(labelContent)
+            view.addSubview(buttonLogout)
             
             labelTitle.snp.makeConstraints { make in
                 make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-                make.left.equalTo(view).offset(16)
-                make.right.equalTo(view).offset(-16)
+                make.left.equalTo(view.snp.left).offset(16)
+                make.right.equalTo(view.snp.right).offset(-16)
             }
             
             labelContent.snp.makeConstraints { make in
                 make.top.equalTo(labelTitle.snp.bottom).offset(8)
-                make.left.equalTo(view).offset(16)
-                make.right.equalTo(view).offset(-16)
+                make.left.equalTo(view.snp.left).offset(16)
+                make.right.equalTo(view.snp.right).offset(-16)
+            }
+            
+            buttonLogout.snp.makeConstraints { make in
+                make.top.equalTo(labelContent.snp.bottom).offset(16)
+                make.left.equalTo(view.snp.left).offset(16)
+                make.right.equalTo(view.snp.right).offset(-16)
+                make.height.equalTo(44)
             }
             
             trailingContent.snp.makeConstraints { make in
@@ -84,7 +109,14 @@ extension Home {
                 make.width.equalTo(300)
             }
         }
+        
+        @objc private func handlerLogout() {
+            controller.setLogout()
+        }
     }
 }
 
 
+#Preview {
+    Home.ViewController(controller: .init())
+}
