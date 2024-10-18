@@ -12,76 +12,86 @@ import SwiftUI
 extension Login {
     
     struct BackgroundView: View {
+        @State private var viewModel: BackgroundViewModel
         let handler: (Int) -> Void
         
-        init(tiles: [Int: TileData], handler: @escaping (Int) -> Void, tilesState: TilesState = TilesState(), scene: BackgroundSimulation? = nil, dragOffsets: [Int : CGSize] = [:]) {
-            self.tiles = tiles
+        init(tiles: [Int: TileData], handler: @escaping (Int) -> Void) {
+            self._viewModel = State(initialValue: BackgroundViewModel(tiles: tiles))
             self.handler = handler
-            self.tilesState = tilesState
-            self.scene = scene
-            self.dragOffsets = dragOffsets
-        }
-        
-        private var tiles: [Int: TileData]
-        private var tilesState = TilesState()
-        @State private var scene: BackgroundSimulation?
-        @State private var dragOffsets: [Int: CGSize] = [:]
-        
-        private func convertPosition(_ position: CGPoint, in size: CGSize) -> CGPoint {
-            return CGPoint(x: position.x, y: size.height - position.y)
         }
         
         var body: some View {
             GeometryReader { geometry in
                 ZStack {
-                    SpriteView(scene: scene ?? BackgroundSimulation(tilesState: tilesState, size: geometry.size))
-                        .edgesIgnoringSafeArea(.all)
+                    if let scene = viewModel.scene {
+                        SpriteView(scene: scene)
+                            .edgesIgnoringSafeArea(.all)
+                    }
                     
-                    ForEach(0..<tilesState.count, id: \.self) { id in
-                        TileWrapper(
-                            id: id,
-                            config: tilesState.getConfig(id),
-                            geometrySize: geometry.size,
-                            content: { _ in
-                                TileView(data: tiles[id] ?? TileData(title: "", location: ""), rotation: Angle(radians: Double(tilesState.getConfig(id).angle)))
+                    ForEach(0..<viewModel.tilesState.count, id: \.self) { id in
+                        if let tile = viewModel.tiles[id] {
+                            TileWrapper(
+                                id: id,
+                                config: viewModel.tilesState.getConfig(id),
+                                geometrySize: geometry.size,
+                                content: { _ in
+                                    TileView(
+                                        data: tile,
+                                        rotation: Angle(radians: Double(viewModel.tilesState.getConfig(id).angle))
+                                    )
                                     .onTapGesture {
                                         handler(id)
                                     }
-                            },
-                            dragOffset: Binding(
-                                get: { dragOffsets[id] ?? .zero },
-                                set: { dragOffsets[id] = $0 }
-                            ),
-                            onDragChanged: { newPosition, rotation in
-                                scene?.updateTilePosition(id: id, position: newPosition, rotation: rotation)
-                            },
-                            onDragEnded: { finalPosition, velocity, angularVelocity in
-                                scene?.endTileDrag(id: id, position: finalPosition, velocity: velocity, angularVelocity: angularVelocity)
-                                dragOffsets[id] = .zero
-                            }
-                        )
-                        .allowsHitTesting(true)
+                                },
+                                onDragChanged: { newPosition, rotation in
+                                    viewModel.scene?.updateTilePosition(id: id, position: newPosition, rotation: rotation)
+                                },
+                                onDragEnded: { finalPosition, velocity, angularVelocity in
+                                    viewModel.scene?.endTileDrag(id: id, position: finalPosition, velocity: velocity, angularVelocity: angularVelocity)
+                                }
+                            )
+                            .allowsHitTesting(true)
+                        }
                     }
                 }
                 .onAppear {
-                    if scene == nil {
-                        scene = BackgroundSimulation(tilesState: tilesState, size: geometry.size)
-                    }
-                    
-                    // Initialize tiles
-                    for i in 0..<tiles.count {
-                        /// Adiciona haptics
-                        let config = TileConfig(
-                            position: CGPoint(x: CGFloat.random(in: 0...geometry.size.width),
-                                              y: CGFloat.random(in: 0...geometry.size.height)),
-                            size: CGSize(width: 300, height: 50),
-                            angle: CGFloat.random(in: 0...CGFloat.pi * 2)
-                        )
-                        tilesState.setConfig(id: i, config: config)
-                    }
-                    tilesState.setReady()
+                    viewModel.initializeScene(size: geometry.size)
+                    viewModel.initializeTiles(geometrySize: geometry.size)
                 }
             }
+        }
+    }
+    
+    @Observable
+    class BackgroundViewModel {
+        var tilesState: TilesState
+        var scene: BackgroundSimulation?
+        var tiles: [Int: TileData]
+        
+        init(tiles: [Int: TileData]) {
+            self.tiles = tiles
+            self.tilesState = TilesState()
+        }
+        
+        func initializeScene(size: CGSize) {
+            if scene == nil {
+                scene = BackgroundSimulation(tilesState: tilesState, size: size)
+            }
+        }
+        
+        func initializeTiles(geometrySize: CGSize) {
+            guard tilesState.count == 0 else { return }
+            
+            for i in 0..<tiles.count {
+                let config = TileConfig(
+                    position: CGPoint(x: CGFloat.random(in: 0...geometrySize.width),
+                                      y: CGFloat.random(in: 0...geometrySize.height)),
+                    size: CGSize(width: 300, height: 50),
+                    angle: CGFloat.random(in: 0...CGFloat.pi * 2)
+                )
+                tilesState.setConfig(id: i, config: config)
+            }
+            tilesState.setReady()
         }
     }
 
@@ -90,22 +100,21 @@ extension Login {
         let config: TileConfig
         let geometrySize: CGSize
         let content: (CGFloat) -> Content
-        @Binding var dragOffset: CGSize
         let onDragChanged: (CGPoint, CGFloat) -> Void
         let onDragEnded: (CGPoint, CGVector, CGFloat) -> Void
         
+        @State private var dragOffset: CGSize = .zero
         @State private var isDragging = false
         @State private var lastDragPosition: CGPoint?
         @State private var angularVelocity: CGFloat = 0
         @State private var currentRotation: CGFloat
         @State private var dragAnchor: CGPoint = .zero
         
-        init(id: Int, config: TileConfig, geometrySize: CGSize, content: @escaping (CGFloat) -> Content, dragOffset: Binding<CGSize>, onDragChanged: @escaping (CGPoint, CGFloat) -> Void, onDragEnded: @escaping (CGPoint, CGVector, CGFloat) -> Void) {
+        init(id: Int, config: TileConfig, geometrySize: CGSize, content: @escaping (CGFloat) -> Content, onDragChanged: @escaping (CGPoint, CGFloat) -> Void, onDragEnded: @escaping (CGPoint, CGVector, CGFloat) -> Void) {
             self.id = id
             self.config = config
             self.geometrySize = geometrySize
             self.content = content
-            self._dragOffset = dragOffset
             self.onDragChanged = onDragChanged
             self.onDragEnded = onDragEnded
             self._currentRotation = State(initialValue: config.angle)

@@ -12,6 +12,7 @@ extension Login {
     
     @Observable
     class Controller {
+        var isLogged = false
         var destination: Destination?
         let tiles: [Int: TileData] = tileDataMock
         
@@ -21,13 +22,16 @@ extension Login {
         }
         
         func goToFeatureModal(with index: Int) {
-                guard let tiles = tiles[index] else { return }
-                destination = .showFeature(tiles)
+            guard let tiles = tiles[index] else { return }
+            destination = .showFeature(tiles)
         }
         
         
         func startGoogleAuthentication() {
-            
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(1))
+                isLogged = true
+            }
         }
     }
 }

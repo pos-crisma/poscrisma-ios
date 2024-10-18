@@ -6,15 +6,30 @@
 //
 
 import Epoxy
-import UIKit
+import SwiftUI
 import UIKitNavigation
 
 extension Root {
-    final class ViewController: UIViewController {
-
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            view.backgroundColor = .white
+    struct ViewController: View {
+        
+        @State var controller: Controller
+        
+        var body: some View {
+            ZStack {
+                if let loginController = controller.loginController {
+                    Login.ViewController(controller: loginController)
+                        .onChange(of: loginController.isLogged) { _, newValue in
+                            if newValue { controller.handlerSuccessLogin() }
+                        }
+                }
+                
+                if let homeController = controller.homeController {
+                    UIViewControllerRepresenting {
+                        Home.ViewController(controller: homeController)
+                    }
+                }
+            }
+            .onAppear(perform: controller.onInitController)
         }
     }
 }

@@ -6,7 +6,34 @@
 //
 
 import UIKit
+import SwiftUI
 
 extension Root {
-    struct Controller { }
+    
+    @Observable
+    class Controller {
+        var loginController: Login.Controller?
+        var homeController: Home.Controller?
+        
+        func onInitController() {
+            withAnimation {
+                homeController = nil
+                loginController = .init()
+            }
+        }
+        
+        func handlerSuccessLogin() {
+            withAnimation {
+                homeController = .init()
+                loginController = nil
+            }
+        }
+        
+        func handlerLogout() {
+            withAnimation {
+                homeController = nil
+                loginController = .init()
+            }
+        }
+    }
 }

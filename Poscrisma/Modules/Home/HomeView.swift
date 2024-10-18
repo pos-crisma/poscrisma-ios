@@ -13,6 +13,17 @@ import SnapKit
 extension Home {
     final class ViewController: UIViewController {
         
+        @UIBinding var controller: Controller
+        
+        init(controller: Controller) {
+            self.controller = controller
+            super.init(nibName: nil, bundle: nil)
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
         lazy var labelTitle: UILabel = {
             let label = UILabel()
             label.text = """

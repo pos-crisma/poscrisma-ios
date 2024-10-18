@@ -14,7 +14,7 @@ struct PoscrismaApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Login.ViewController(controller: .init())
+            Root.ViewController(controller: .init())
                 .ignoresSafeArea()
         }
     }
