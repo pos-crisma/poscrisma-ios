@@ -6,12 +6,54 @@
 //
 
 import Epoxy
-import UIKit
+import SwiftUI
 import UIKitNavigation
 import SnapKit
 
+import SwiftUI
+
+
+struct ContentView: View {
+    
+    @State var sheet = false
+    @State var cover = false
+    
+    var body: some View {
+        Button("Click me for sheet") {
+            sheet = true
+        }
+        .fullScreenCover(isPresented: $cover) {
+            Text("This is a full screen cover")
+        }
+        .sheet(isPresented: $sheet, onDismiss: {cover = true}) {
+            Text("This is a sheet")
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+}
+
+
 extension Home {
-    final class ViewController: UIViewController {
+    struct ViewController: View {
+        @State var controller: Controller
+        
+        var body: some View {
+            UIViewControllerRepresenting {
+                Screen(controller: controller)
+            }
+            .fullScreenCover(item: $controller.destination.airbnb) { model in
+                UIViewControllerRepresenting {
+                    Airbnb.ViewController(controller: model)
+                } 
+                .ignoresSafeArea()
+            }
+        }
+    }
+    
+    final class Screen: UIViewController {
         
         @UIBinding var controller: Controller
         
@@ -59,6 +101,23 @@ extension Home {
             return view
         }()
         
+        lazy var buttonPresentAirbnb: Style.ScaleButton = {
+            let label = UILabel()
+            label.text = "Present Airbnb"
+            label.font = .systemFont(ofSize: 16, weight: .bold)
+            label.textColor = .white
+            label.textAlignment = .center
+            
+            let button = Style.ScaleButton()
+            button.setAction(handlerPresentAirbnb)
+            button.setCustomContent(label)
+            
+            button.backgroundColor = .black
+            button.layer.cornerRadius = 8
+
+            return button
+        }()
+        
         lazy var buttonLogout: Style.ScaleButton = {
             let label = UILabel()
             label.text = "Logout"
@@ -80,11 +139,17 @@ extension Home {
             super.viewDidLoad()
             view.backgroundColor = .white
             
+            setupUI()
+        }
+        
+        private func setupUI() {
+            
             view.addSubview(trailingContent)
             view.addSubview(labelTitle)
             view.addSubview(labelContent)
+            view.addSubview(buttonPresentAirbnb)
             view.addSubview(buttonLogout)
-            
+
             labelTitle.snp.makeConstraints { make in
                 make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
                 make.left.equalTo(view.snp.left).offset(16)
@@ -97,8 +162,15 @@ extension Home {
                 make.right.equalTo(view.snp.right).offset(-16)
             }
             
-            buttonLogout.snp.makeConstraints { make in
+            buttonPresentAirbnb.snp.makeConstraints { make in
                 make.top.equalTo(labelContent.snp.bottom).offset(16)
+                make.left.equalTo(view.snp.left).offset(16)
+                make.right.equalTo(view.snp.right).offset(-16)
+                make.height.equalTo(54)
+            }
+            
+            buttonLogout.snp.makeConstraints { make in
+                make.top.equalTo(buttonPresentAirbnb.snp.bottom).offset(16)
                 make.left.equalTo(view.snp.left).offset(16)
                 make.right.equalTo(view.snp.right).offset(-16)
                 make.height.equalTo(54)
@@ -110,6 +182,10 @@ extension Home {
                 make.height.equalTo(300)
                 make.width.equalTo(300)
             }
+        }
+        
+        @objc private func handlerPresentAirbnb() {
+            controller.presentAirbnb()
         }
         
         @objc private func handlerLogout() {

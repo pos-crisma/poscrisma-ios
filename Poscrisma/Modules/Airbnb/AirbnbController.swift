@@ -6,7 +6,13 @@
 //
 
 import UIKit
+import XCTestDynamicOverlay
 
 extension Airbnb {
-    struct Controller { }
+    @Observable
+    class Controller: Identifiable { 
+        var onClose: () -> Void = {
+            XCTFail("Login.Controller.onSuccess unimplemented.")
+        }
+    }
 }

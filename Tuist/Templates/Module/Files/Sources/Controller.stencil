@@ -8,5 +8,7 @@
 import UIKit
 
 extension {{ name }} {
-    struct Controller { }
+    
+    @Observable
+    class Controller: Identifiable { }
 }

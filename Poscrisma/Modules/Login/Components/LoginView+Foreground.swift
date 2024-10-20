@@ -7,15 +7,18 @@
 
 import Foundation
 import SwiftUI
+import AuthenticationServices
 
 extension Login {
     struct ForegroundView: View {
         let isLoading: Bool
-        let handler: () -> Void
+        let handlerGoogle: () -> Void
+        let handlerApple: (Result<ASAuthorization, Error>) -> Void
         
-        init(isLoading: Bool, handler: @escaping () -> Void) {
+        init(isLoading: Bool, handlerGoogle: @escaping () -> Void, handlerApple: @escaping (Result<ASAuthorization, Error>) -> Void) {
             self.isLoading = isLoading
-            self.handler = handler
+            self.handlerGoogle = handlerGoogle
+            self.handlerApple = handlerApple
         }
         
         var body: some View {
@@ -70,7 +73,7 @@ extension Login {
                         // Custom Button
                         Button {
                             Manager.Haptic.shared.playHaptic(for: .impact(.medium))
-                            handler()
+                            handlerGoogle()
                         } label: {
                             HStack(spacing: 8) {
                                 if isLoading {
@@ -96,6 +99,18 @@ extension Login {
                         .disabled(isLoading)
                         .padding(.bottom, 8)
                         .buttonStyle(.scale)
+                        
+                        VStack {
+                            SignInWithAppleButton { request in
+                                request.requestedScopes = [.email, .fullName]
+                            } onCompletion: { result in
+                                handlerApple(result)
+                            }
+                            .buttonStyle(.scale)
+                        }
+                        .disabled(isLoading)
+                        .frame(height: 54)
+                        .padding(.bottom, 8)
                         
                         // Terms and Conditions Text
                         Text("Ao clicar em \"Continuar\", você aceita os termos de uso do aplicativo e politicas de privacidade")

@@ -1,21 +1,21 @@
 //
-//  {{ name }}View.swift
+//  HomeDetailView.swift
 //  Poscrisma
 //
-//  Created by {{ author }} on {{ date }}.
+//  Created by Rodrigo Souza on 18/10/2024.
 //
 
 import Epoxy
 import UIKit
 import UIKitNavigation
 
-extension {{ name }} {
+extension HomeDetail {
     final class ViewController: UIViewController {
         
-        @UIBinding private var model: Controller
-            
-        init(model: Controller) {
-            self.model = model
+        @UIBindable var controller: Controller
+        
+        init(controller: Controller) {
+            self.controller = controller
             super.init(nibName: nil, bundle: nil)
         }
         

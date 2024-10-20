@@ -27,6 +27,11 @@ extension DependencyValues {
         get { self[Manager.Firebase.self] }
         set { self[Manager.Firebase.self] = newValue }
     }
+    
+    var supabaseClient: Manager.Supabase {
+        get { self[Manager.Supabase.self] }
+        set { self[Manager.Supabase.self] = newValue }
+    }
 }
 
 enum Manager { }

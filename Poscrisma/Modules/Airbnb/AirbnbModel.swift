@@ -8,5 +8,6 @@
 import UIKit
 
 extension Airbnb {
-    struct Model { }
+    @Observable
+    class Model: Identifiable { }
 }

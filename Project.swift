@@ -11,7 +11,7 @@ let project = Project(
       name: "Poscrisma", 
       destinations: .iOS, 
       product: .app,
-      bundleId: "com.poscrisma.app.Poscrisma",
+      bundleId: "org.poscrisma.poscrisma",
       deploymentTargets: .iOS("17.0"),
       sources: ["Poscrisma/**"],
       resources: [
@@ -27,7 +27,8 @@ let project = Project(
         .external(name: "AppKitNavigation"),    // AppKitNavigation from swift-navigation
         .external(name: "SwiftUINavigation"),   // SwiftUINavigation from swift-navigation
         .external(name: "UIKitNavigation"),     // UIKitNavigation from swift-navigation
-        .external(name: "SnapKit")
+        .external(name: "SnapKit"),
+        .external(name: "Supabase")
       ],
       settings: .settings(configurations: [
         .debug(name: "Debug", xcconfig: "./xcconfigs/Poscrisma.xcconfig"), 
@@ -38,7 +39,7 @@ let project = Project(
       name: "PoscrismaTests",
       destinations: .iOS,
       product: .unitTests,
-      bundleId: "com.poscrisma.app.Poscrisma.unitTest",
+      bundleId: "org.poscrisma.poscrisma.unitTest",
       sources: ["Poscrisma/**"],
       dependencies: [
           .target(name: "Poscrisma")
@@ -48,7 +49,7 @@ let project = Project(
       name: "PoscrismaUITests",
       destinations: .iOS,
       product: .uiTests,
-      bundleId: "com.poscrisma.app.Poscrisma.uiTests",
+      bundleId: "org.poscrisma.poscrisma.uiTests",
       sources: ["PoscrismaUITests/**"],
       dependencies: [
           .target(name: "Poscrisma")

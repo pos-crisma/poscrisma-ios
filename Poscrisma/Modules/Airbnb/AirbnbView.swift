@@ -12,16 +12,39 @@ import UIKitNavigation
 extension Airbnb {
     final class ViewController: CollectionViewController, UIScrollViewDelegate, UICollectionViewDelegate {
         
+        @UIBindable var controller: Controller
+        
         private enum SectionID {
             case header, subHeader, details, amenities, price
         }
+        
+        lazy var icon: Style.ScaleButton = {
+            let icon = UIImage(systemName: "xmark.circle.fill")
+            let imageView = UIImageView(image: icon)
+            imageView.tintColor = .white
+            
+            let button = Style.ScaleButton()
+            button.setAction(onClose)
+            button.setCustomContent(imageView)
+            
+            imageView.snp.makeConstraints { make in
+                make.height.width.equalTo(12)
+                make.top.equalTo(button.snp.top).offset(8)
+                make.bottom.equalTo(button.snp.bottom).offset(-8)
+                make.trailing.equalTo(button.snp.trailing).offset(-8)
+                make.leading.equalTo(button.snp.leading).offset(8)
+            }
+            
+            button.addTarget(self, action: #selector(onClose), for: .touchUpInside)
+            return button
+        }()
         
         private var headerImageView: ImageRow?
         private let headerHeight: CGFloat = 300 // Altura padrão do header
         private let maxHeaderHeight: CGFloat = 600 // Altura máxima do header durante o stretch
         
-        
-        init() {
+        init(controller: Controller) {
+            self.controller = controller
             super.init(layout: UICollectionViewCompositionalLayout { sectionIndex, _ -> NSCollectionLayoutSection? in
                 switch sectionIndex {
                 case 0: return .stretchyHeader
@@ -36,6 +59,13 @@ extension Airbnb {
             collectionView.backgroundColor = .black
             collectionView.contentInsetAdjustmentBehavior = .never
             collectionView.scrollDelegate = self
+            
+            view.addSubview(icon)
+            
+            icon.snp.makeConstraints { make in
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                make.trailing.equalToSuperview().offset(-16)
+            }
             
             observe { [weak self] in
                 guard let self else { return }
@@ -144,6 +174,11 @@ extension Airbnb {
             }
             .compositionalLayoutSection(.list)
         }
+        
+        @objc private func onClose() {
+            Manager.Haptic.shared.playHaptic(for: .impact(.medium))
+            controller.onClose()
+        }
     }
     
     // MARK: - Custom Row Types
@@ -168,16 +203,12 @@ extension Airbnb {
         
         private func setupImageView(style: Style) {
             addSubview(imageView)
-            imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
             
-            NSLayoutConstraint.activate([
-                imageView.topAnchor.constraint(equalTo: topAnchor),
-                imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                imageView.bottomAnchor.constraint(equalTo: bottomAnchor)
-            ])
+            imageView.snp.makeConstraints { make in
+                make.top.leading.trailing.bottom.equalToSuperview()
+            }
         }
         
         struct Content: Equatable {
@@ -249,25 +280,27 @@ extension Airbnb {
             addSubview(iconImageView)
             addSubview(label)
             
-            iconImageView.translatesAutoresizingMaskIntoConstraints = false
-            label.translatesAutoresizingMaskIntoConstraints = false
             
-            iconImageView.tintColor = .systemBlue
+            iconImageView.tintColor = .systemGray
             label.textColor = .white
             label.font = UIFont.systemFont(ofSize: 16)
             
-            NSLayoutConstraint.activate([
-                iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-                iconImageView.widthAnchor.constraint(equalToConstant: 24),
-                iconImageView.heightAnchor.constraint(equalToConstant: 24),
-                
-                label.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 16),
-                label.trailingAnchor.constraint(equalTo: trailingAnchor),
-                label.centerYAnchor.constraint(equalTo: centerYAnchor),
-                
-                heightAnchor.constraint(equalToConstant: 44)
-            ])
+            iconImageView.snp.makeConstraints { make in
+                make.leading.equalToSuperview()
+                make.centerY.equalToSuperview()
+                make.size.equalTo(CGSize(width: 24, height: 24))
+            }
+
+            label.snp.makeConstraints { make in
+                make.leading.equalTo(iconImageView.snp.trailing).offset(16)
+                make.trailing.equalToSuperview()
+                make.centerY.equalToSuperview()
+            }
+
+            self.snp.makeConstraints { make in
+                make.height.equalTo(44)
+            }
+            
         }
         
         struct Content: Equatable {
@@ -296,8 +329,9 @@ extension Airbnb {
         }
         
         private func setupButton(style: Style) {
-            translatesAutoresizingMaskIntoConstraints = false
-            heightAnchor.constraint(equalToConstant: 50).isActive = true
+            self.snp.makeConstraints { make in
+                make.height.equalTo(50)
+            }
             
             switch style {
             case .primary:

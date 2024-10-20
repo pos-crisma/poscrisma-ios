@@ -1,5 +1,5 @@
 {
-  "originHash" : "f82115278b0b2f9ccc2748e35e850fd516ce146015ef0854970314ecfcb5bcc9",
+  "originHash" : "02804f989983bc2cced987454ba3d2f8f9ad78e4f73fa150bfdd9d8ab7b904e8",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -26,6 +26,24 @@
       "state" : {
         "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
         "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "supabase-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/supabase/supabase-swift.git",
+      "state" : {
+        "revision" : "70158cce191a9676f47d3ba11d71b7f9150721f9",
+        "version" : "2.20.2"
+      }
+    },
+    {
+      "identity" : "swift-asn1",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-asn1.git",
+      "state" : {
+        "revision" : "7faebca1ea4f9aaf0cda1cef7c43aecd2311ddf6",
+        "version" : "1.3.0"
       }
     },
     {
@@ -65,6 +83,15 @@
       }
     },
     {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "21f7878f2b39d46fd8ba2b06459ccb431cdf876c",
+        "version" : "3.8.1"
+      }
+    },
+    {
       "identity" : "swift-custom-dump",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump",
@@ -80,6 +107,15 @@
       "state" : {
         "revision" : "3ef38bb702a1a2f39c7e19fc0578403b8ee52b17",
         "version" : "1.3.9"
+      }
+    },
+    {
+      "identity" : "swift-http-types",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-types.git",
+      "state" : {
+        "revision" : "ae67c8178eb46944fd85e4dc6dd970e1f3ed6ccd",
+        "version" : "1.3.0"
       }
     },
     {

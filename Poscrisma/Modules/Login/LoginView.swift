@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SpriteKit
+import UIKitNavigation
 
 extension Login {
     struct ViewController: View {
@@ -19,29 +19,25 @@ extension Login {
                     controller.goToFeatureModal(with: $0)
                 }
                 
-                ForegroundView(isLoading: controller.isLoading) {
-                    controller.startGoogleAuthentication()
+                ForegroundView(isLoading: controller.isLoading, handlerGoogle: controller.startGoogleAuthentication, handlerApple: controller.startAppleAuth(result:))
+            }
+            .sheet(item: $controller.destination.camping) { model in
+                Camping.ViewController(model: model)
+            }
+            .fullScreenCover(item: $controller.destination.isLoading) { model in
+                UIViewControllerRepresenting {
+                    LoginLoading.ViewController(model: model)
                 }
             }
-            .sheet(item: $controller.destination.showFeature) { $item in
-                
-                Form {
-                    Text("\($item.wrappedValue.title)")
+            .sheet(item: $controller.destination.isError) { model in
+                UIViewControllerRepresenting {
+                    LoginError.ViewController(model: model)
                 }
-                .navigationTitle("Sheet with payload")
             }
         }
     }
 }
 
-
-
-
-
 #Preview {
     Login.ViewController(controller: .init())
 }
-
-
-
-

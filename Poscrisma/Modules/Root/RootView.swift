@@ -16,34 +16,20 @@ extension Root {
         
         var body: some View {
             
-            ZStack {
-                if let loginController = controller.loginController {
-                    Login.ViewController(controller: loginController)
-                        .onChange(of: loginController.isLogged) { _, newValue in
-                            if newValue { controller.handlerSuccessLogin() }
-                        }
-                        .ignoresSafeArea(.container)
-                        .transition(.opacity.combined(with: .move(edge: .leading)))
-                        .animation(.easeInOut(duration: 0.3), value: controller.loginController != nil)
-                }
-                
-                if let homeController = controller.homeController {
+            Group {
+                switch self.controller.destination {
+                case .login(let model):
+                    Login.ViewController(controller: model)
+                case .home(let model):
                     NavigationStack {
-                        UIViewControllerRepresenting {
-                            Home.ViewController(controller: homeController)
-                        }
-                        .ignoresSafeArea(.container)
-                        .onChange(of: homeController.isLogout) { _, newValue in
-                            if newValue { controller.handlerLogout() }
-                        }
-                        .transition(.opacity.combined(with: .move(edge: .trailing)))
-                        .animation(.easeInOut(duration: 0.3), value: controller.homeController != nil)
-
+                        Home.ViewController(controller: model)
+                            .ignoresSafeArea()
                     }
+                case .none:
+                    Rectangle()
                 }
             }
-            .onAppear(perform: controller.onInitController)
-            
+            .onAppear(perform: controller.verifyUserIsLogged)
         }
     }
 }
