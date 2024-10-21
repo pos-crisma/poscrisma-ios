@@ -67,7 +67,7 @@ let template = Template(
             templatePath: "Files/Sources/Model.stencil"
         ),
         .file(
-            path: "GetUpTimeTests/Modules/\(nameAttribute)/\(nameAttribute)Tests.swift",
+            path: "PoscrismaTests/Modules/\(nameAttribute)/\(nameAttribute)Tests.swift",
             templatePath: "Files/Tests/Tests.stencil"
         ),
     ]

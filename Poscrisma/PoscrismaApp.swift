@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import UIKitNavigation
+import GoogleSignIn
 
 @main
 struct PoscrismaApp: App {
@@ -15,6 +15,9 @@ struct PoscrismaApp: App {
     var body: some Scene {
         WindowGroup {
             Root.ViewController(controller: .init())
+                .onOpenURL { url in
+                    GIDSignIn.sharedInstance.handle(url)
+                }
                 .ignoresSafeArea()
         }
     }

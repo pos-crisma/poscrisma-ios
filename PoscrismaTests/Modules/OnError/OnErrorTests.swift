@@ -1,14 +1,14 @@
 //
-//  AirbnbPureViewController.swift
+//  OnErrorViewController.swift
 //  Poscrisma
 //
-//  Created by Rodrigo Souza on 09/09/2024.
+//  Created by Rodrigo Souza on 20/10/2024.
 //
 
 import XCTest
 @testable import Poscrisma
 
-final class AirbnbPureTests: XCTestCase {
+final class OnErrorTests: XCTestCase {
 
     func testExample() {
         XCTAssertEqual(1, 1)

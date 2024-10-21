@@ -24,8 +24,6 @@ extension Root {
         @Dependency(\.supabaseClient) var client
         
         init() {
-            
-            
             bind()
         }
         

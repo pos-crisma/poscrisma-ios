@@ -1,0 +1,120 @@
+{
+  "sourceLanguage" : "pt-BR",
+  "strings" : {
+    "2024, %@" : {
+
+    },
+    "Click me for sheet" : {
+
+    },
+    "login.buble.app.name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acamps 2024"
+          }
+        }
+      }
+    },
+    "login.buble.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ei você,"
+          }
+        }
+      }
+    },
+    "login.camping.section.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informações"
+          }
+        }
+      }
+    },
+    "login.google.button.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue with Google"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sessão com o Google"
+          }
+        }
+      }
+    },
+    "login.label.service" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By clicking \\\"Continue\\\", you accept the app's terms of use and privacy policies."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao clicar em \\\"Continuar\\\", você aceita os termos de uso do aplicativo e politicas de privacidade"
+          }
+        }
+      }
+    },
+    "login.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy to manager camping"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Facilidade na gestão de acampamentos"
+          }
+        }
+      }
+    },
+    "login.title" : {
+      "comment" : "\"Meet Acamps\" is the first title of screen",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meet Acamps"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conheça Acamps"
+          }
+        }
+      }
+    },
+    "This is a full screen cover" : {
+
+    },
+    "This is a sheet" : {
+
+    }
+  },
+  "version" : "1.0"
+}

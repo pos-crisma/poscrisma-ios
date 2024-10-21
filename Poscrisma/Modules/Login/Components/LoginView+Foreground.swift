@@ -8,17 +8,27 @@
 import Foundation
 import SwiftUI
 import AuthenticationServices
+import CustomDump
+
+@preconcurrency import GoogleSignIn
 
 extension Login {
+    @MainActor
     struct ForegroundView: View {
+        
         let isLoading: Bool
-        let handlerGoogle: () -> Void
+        let handlerGoogle: (String, String) -> Void
         let handlerApple: (Result<ASAuthorization, Error>) -> Void
         
-        init(isLoading: Bool, handlerGoogle: @escaping () -> Void, handlerApple: @escaping (Result<ASAuthorization, Error>) -> Void) {
+        init(isLoading: Bool, handlerGoogle: @escaping (String, String) -> Void, handlerApple: @escaping (Result<ASAuthorization, Error>) -> Void) {
             self.isLoading = isLoading
             self.handlerGoogle = handlerGoogle
             self.handlerApple = handlerApple
+        }
+        
+        
+        var root: UIViewController {
+            UIApplication.shared.firstKeyWindow?.rootViewController ?? UIViewController()
         }
         
         var body: some View {
@@ -44,7 +54,7 @@ extension Login {
                         
                         // Meet Acamps Text with Arrow and Message Bubble
                         ZStack(alignment: .bottom) {
-                            Text("Conheça Acamps")
+                            Text("login.title")
                                 .font(.system(size: 25, weight: .semibold))
                                 .foregroundColor(Color(red: 0.09, green: 0.09, blue: 0.09))
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -62,7 +72,7 @@ extension Login {
                         .allowsHitTesting(false)
                         
                         // Promo Text
-                        Text("Facilidade na gestão de acampamentos")
+                        Text("login.subtitle")
                             .font(.system(size: 22, weight: .semibold))
                             .kerning(-0.40)
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
@@ -70,22 +80,36 @@ extension Login {
                             .padding(.bottom, 18)
                             .allowsHitTesting(false)
                         
-                        // Custom Button
+                        
                         Button {
                             Manager.Haptic.shared.playHaptic(for: .impact(.medium))
-                            handlerGoogle()
+                            
+                            GIDSignIn.sharedInstance.signIn(withPresenting: root, hint: nil, additionalScopes: ["email"]) { result, error in
+                                if let error = error {
+                                    customDump(error)
+                                    return
+                                }
+                                
+                                guard let result = result else { return }
+                                
+                                guard let idToken = result.user.idToken?.tokenString else { return }
+                                let accessToken = result.user.accessToken.tokenString
+
+                                handlerGoogle(idToken, accessToken)
+                            }
                         } label: {
                             HStack(spacing: 8) {
                                 if isLoading {
                                     ProgressView()
                                 } else {
+                                    // TODO: Change to google icon
                                     Image(systemName: "plus")
-                                        .font(.body)
+                                        .font(.headline)
                                         .fontWeight(.heavy)
                                     
-                                    Text("Continua com Google")
-                                        .font(.body)
-                                        .fontWeight(.bold)
+                                    Text("login.google.button.title")
+                                        .font(.title3)
+                                        .fontWeight(.semibold)
                                 }
                             }
                             .foregroundStyle(.white)
@@ -100,26 +124,23 @@ extension Login {
                         .padding(.bottom, 8)
                         .buttonStyle(.scale)
                         
-                        VStack {
-                            SignInWithAppleButton { request in
-                                request.requestedScopes = [.email, .fullName]
-                            } onCompletion: { result in
-                                handlerApple(result)
-                            }
-                            .buttonStyle(.scale)
+                        SignInWithAppleButton { request in
+                            request.requestedScopes = [.email]
+                        } onCompletion: { result in
+                            handlerApple(result)
                         }
                         .disabled(isLoading)
                         .frame(height: 54)
-                        .padding(.bottom, 8)
+                        .padding(.bottom, 16)
                         
                         // Terms and Conditions Text
-                        Text("Ao clicar em \"Continuar\", você aceita os termos de uso do aplicativo e politicas de privacidade")
+                        Text("login.label.service")
                             .font(.system(size: 12, weight: .semibold))
                             .kerning(0.20)
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .multilineTextAlignment(.center)
                             .allowsHitTesting(false)
-                            .padding(.bottom, 16)
+                            .padding(.bottom, 24)
                     }
                     .padding(.horizontal, 24)
                 }
@@ -187,11 +208,11 @@ extension Login {
                         .frame(width: 45, height: 45)
                     
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Ei você,")
+                        Text("login.buble.title")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(Color(red: 0.392, green: 0.765, blue: 0.529))
                         
-                        Text("Acamps 2024")
+                        Text("login.buble.app.name")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(Color(red: 0.086, green: 0.639, blue: 0.290))
                     }
@@ -207,5 +228,15 @@ extension Login {
                 scale = 1.0
             }
         }
+    }
+}
+
+extension UIApplication {
+    var firstKeyWindow: UIWindow? {
+        UIApplication.shared
+            .connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .filter { $0.activationState == .foregroundActive }
+            .first?.keyWindow
     }
 }

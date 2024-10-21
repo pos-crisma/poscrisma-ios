@@ -50,6 +50,12 @@ extension Home {
                 } 
                 .ignoresSafeArea()
             }
+            .sheet(item: $controller.destination.isError) { model in
+                UIViewControllerRepresenting {
+                    OnError.ViewController(model: model)
+                }
+                .ignoresSafeArea()
+            }
         }
     }
     
@@ -138,6 +144,13 @@ extension Home {
         override func viewDidLoad() {
             super.viewDidLoad()
             view.backgroundColor = .white
+            
+            observe { [weak self] in
+                guard let self else { return }
+                
+                buttonLogout.isEnabled = !controller.isLoading
+                buttonPresentAirbnb.isEnabled = !controller.isLoading
+            }
             
             setupUI()
         }

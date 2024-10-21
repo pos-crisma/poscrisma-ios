@@ -15,8 +15,7 @@ import CustomDump
 extension Home {
     @Observable
     class Controller {
-        var isLogout = false
-        
+        var isLoading = false
         
         var onLogout: () -> Void = {
             XCTFail("Login.Controller.onSuccess unimplemented.")
@@ -26,35 +25,42 @@ extension Home {
             didSet { bind() }
         }
         
-        
         @ObservationIgnored
         @Dependency(\.supabaseClient) var client
         
-        init() {
-          bind()
+        init(isLoading: Bool = false) {
+            self.isLoading = isLoading
         }
         
         @CasePathable
         enum Destination {
             case airbnb(Airbnb.Controller)
             case homeDetail(HomeDetail.Controller)
-        }
-        
-        init(isLogout: Bool = false) {
-            self.isLogout = isLogout
+            case isError(OnError.Controller)
         }
         
         func setLogout() {
-            Task {
+            isLoading = true
+            Task.detached(priority: .background) { [weak self] in
+                guard let self else { return }
                 do {
+                    dump("Starting to logout")
                     try await client.logout()
-                    onLogout()
+                    
+                    
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        isLoading = false
+                        onLogout()
+                    }
                 } catch {
-                    dump(error)
+                    await MainActor.run { [weak self] in
+                        guard let self else { return }
+                        isLoading = false
+                        destination = .isError(.init())
+                    }
                 }
             }
-            
-            
         }
         
         func presentAirbnb() {
@@ -74,7 +80,10 @@ extension Home {
                 }
                 
                 break
-            case .homeDetail(let controller):
+            case .homeDetail(_):
+                
+                break
+            case .isError(_):
                 
                 break
             case .none:

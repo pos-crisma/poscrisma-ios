@@ -1,5 +1,5 @@
 //
-//  LoginErrorView.swift
+//  OnErrorView.swift
 //  Poscrisma
 //
 //  Created by Rodrigo Souza on 20/10/2024.
@@ -9,11 +9,11 @@ import Epoxy
 import UIKit
 import UIKitNavigation
 
-extension LoginError {
+extension OnError {
     final class ViewController: UIViewController {
         
         @UIBinding private var model: Controller
-        
+            
         init(model: Controller) {
             self.model = model
             super.init(nibName: nil, bundle: nil)

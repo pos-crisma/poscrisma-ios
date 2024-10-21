@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 
 extension CoreApp {
     final class Delegate: NSObject, UIApplicationDelegate {
@@ -13,7 +14,6 @@ extension CoreApp {
             _ application: UIApplication,
             didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
         ) -> Bool {
-            
             return true
         }
     }

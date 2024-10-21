@@ -18,6 +18,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-navigation", from: "2.2.0"),
     .package(url: "https://github.com/airbnb/epoxy-ios", branch: "master"),
     .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.7.1"),
-    .package(url: "https://github.com/supabase/supabase-swift.git", from: "2.20.2")
+    .package(url: "https://github.com/supabase/supabase-swift.git", from: "2.20.2"),
+    .package(url: "https://github.com/google/GoogleSignIn-iOS.git", from: "8.0.0")
   ]
 )
