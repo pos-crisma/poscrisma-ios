@@ -30,18 +30,16 @@ extension Login {
             .sheet(item: $controller.destination.camping) {
                 Camping.ViewController(model: $0)
             }
-            .fullScreenCover(item: $controller.destination.isLoading) { model in
+            .sheet(item: $controller.destination.isLoading) { model in
                 UIViewControllerRepresenting {
                     LoginLoading.ViewController(model: model)
                 }
-                .ignoresSafeArea()
             }
             .sheet(item: $controller.destination.isError) { model in
                 UIViewControllerRepresenting {
                     LoginError.ViewController(model: model)
                 }
-                .presentationDetents([.fraction(0.7)])
-                .ignoresSafeArea()
+                .presentationDetents([.medium])   
             }
         }
     }

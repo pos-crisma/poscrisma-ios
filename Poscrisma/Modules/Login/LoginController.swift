@@ -12,12 +12,12 @@ import XCTestDynamicOverlay
 import AuthenticationServices
 import Dependencies
 import CustomDump
-@preconcurrency import GoogleSignIn
+
+import GoogleSignIn
 
 extension Login {
     
     @Observable
-    
     class Controller: Identifiable {
         var isLoading = false
         var isLogged = false
@@ -50,26 +50,18 @@ extension Login {
         }
         
         func goToCampaign(with index: Int) {
-            withAnimation {
-                guard let tiles = tiles[index] else { return }
-                let model = Camping.Controller(tile: tiles)
-                
-                destination = .camping(model)
-            }
+            guard let tiles = tiles[index] else { return }
+            let model = Camping.Controller(tile: tiles)
+            
+            destination = .camping(model)
         }
         
         private func goToLoadingView() {
-            withAnimation {
-                destination = nil
-                destination = .isLoading(.init())
-            }
+            destination = .isLoading(.init())
         }
         
         private func goToErrorView(with error: LoginError.Controller.State) {
-            withAnimation {
-                destination = nil
-                destination = .isError(.init(errorType: error))
-            }
+            destination = .isError(.init(errorType: error))
         }
         
         func startAppleAuth(_ result: Result<ASAuthorization, Error>) {
@@ -126,7 +118,10 @@ extension Login {
         }
         
         func startGoogleAuthentication(_ idToken: String, _ accessToken: String) {
-            Task {
+            
+            Task.detached(priority: .background) { [weak self] in
+                guard let self else { return }
+                
                 do {
                     await MainActor.run { [weak self] in
                         guard let self else { return }
@@ -135,7 +130,6 @@ extension Login {
                     
                     let _ = try await client.signInGoogle(idToken, accessToken)
                     
-                    
                     // TODO: Move session to memory for reuse on endpoints
                     // TODO: in loading scenary call profile endpoint for validate state in application ( if not has profile go to onboarding ).
                     
@@ -143,6 +137,7 @@ extension Login {
                         guard let self else { return }
                         onSuccess()
                     }
+                    
                 } catch let err {
                     goToErrorView(with: .googleSupabase)
                     dump("What is error: \(err)")
@@ -151,6 +146,8 @@ extension Login {
         }
         
         private func bind() {
+            customDump(destination)
+            
             switch destination {
             case .camping(_):
                 break

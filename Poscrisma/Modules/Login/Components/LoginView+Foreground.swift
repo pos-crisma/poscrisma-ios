@@ -10,7 +10,7 @@ import SwiftUI
 import AuthenticationServices
 import CustomDump
 
-@preconcurrency import GoogleSignIn
+import GoogleSignIn
 
 extension Login {
     @MainActor

@@ -22,10 +22,6 @@ let project = Project(
             deploymentTargets: .iOS("17.0"),
             infoPlist: .extendingDefault(with: [
                 "GIDClientID": "957554883675-p5nhmmsq1trveae4d821bhmfrjv8hq93.apps.googleusercontent.com",
-                "ClientID": "957554883675-p5nhmmsq1trveae4d821bhmfrjv8hq93.apps.googleusercontent.com",
-                "REVERSED_CLIENT_ID": "com.googleusercontent.apps.957554883675-p5nhmmsq1trveae4d821bhmfrjv8hq93",
-                "PLIST_VERSION": "1",
-                "BUNDLE_ID": "org.poscrisma.poscrisma",
                 "CFBundleURLTypes": [
                     [
                         "CFBundleURLSchemes": [
