@@ -32,6 +32,11 @@ extension DependencyValues {
         get { self[Manager.Supabase.self] }
         set { self[Manager.Supabase.self] = newValue }
     }
+    
+    var network: Manager.Network {
+        get { self[Manager.Network.self] }
+        set { self[Manager.Network.self] = newValue }
+    }
 }
 
 enum Manager { }

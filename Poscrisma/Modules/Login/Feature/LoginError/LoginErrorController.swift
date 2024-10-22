@@ -15,7 +15,7 @@ extension LoginError {
             XCTFail("LoginError.Controller.onHandler unimplemented.")
         }
         
-        enum State: Equatable {
+        enum State {
             // Apple
             case appleCancel
             case appleError
@@ -26,6 +26,8 @@ extension LoginError {
             case googleError
             case googleUnknown
             case googleSupabase
+            // Endpoint
+            case endpoint(Manager.Network.NetworkError)
             // Unknown
             case unknown
         }

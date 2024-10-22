@@ -26,20 +26,30 @@ extension Login {
                 ForegroundView(isLoading: controller.isLoading, 
                                handlerGoogle: controller.startGoogleAuthentication,
                                handlerApple: controller.startAppleAuth)
+                
             }
             .sheet(item: $controller.destination.camping) {
                 Camping.ViewController(model: $0)
             }
-            .sheet(item: $controller.destination.isLoading) { model in
+            .fullScreenCover(item: $controller.destination.isLoading) { model in
                 UIViewControllerRepresenting {
                     LoginLoading.ViewController(model: model)
                 }
+                .ignoresSafeArea()
+                .interactiveDismissDisabled()
             }
             .sheet(item: $controller.destination.isError) { model in
                 UIViewControllerRepresenting {
                     LoginError.ViewController(model: model)
                 }
-                .presentationDetents([.medium])   
+                .ignoresSafeArea()
+                .presentationDetents([.medium])
+            }
+            .fullScreenCover(item: $controller.destination.onboarding) { model in
+                UIViewControllerRepresenting {
+                    Onboarding.ViewController(model: model)
+                }
+                .ignoresSafeArea()
             }
         }
     }

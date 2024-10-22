@@ -33,6 +33,8 @@ extension Login {
         
         @ObservationIgnored
         @Dependency(\.supabaseClient) var client
+        @ObservationIgnored
+        @Dependency(\.network) var network
         
         init(isLoading: Bool = false, isLogged: Bool = false, destination: Destination? = nil) {
             self.isLoading = isLoading
@@ -44,25 +46,13 @@ extension Login {
         
         @CasePathable
         enum Destination {
+            case onboarding(Onboarding.Controller)
             case camping(Camping.Controller)
             case isLoading(LoginLoading.Controller)
             case isError(LoginError.Controller)
         }
         
-        func goToCampaign(with index: Int) {
-            guard let tiles = tiles[index] else { return }
-            let model = Camping.Controller(tile: tiles)
-            
-            destination = .camping(model)
-        }
-        
-        private func goToLoadingView() {
-            destination = .isLoading(.init())
-        }
-        
-        private func goToErrorView(with error: LoginError.Controller.State) {
-            destination = .isError(.init(errorType: error))
-        }
+        // MARK: - User Actions
         
         func startAppleAuth(_ result: Result<ASAuthorization, Error>) {
             
@@ -83,14 +73,9 @@ extension Login {
                         guard let idToken = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else { return }
                         
                         let _ = try await client.signInApple(idToken)
-                        
-                        // TODO: Move session to memory for reuse on endpoints
-                        // TODO: in loading scenary call profile endpoint for validate state in application ( if not has profile go to onboarding ).
-                        
-                        await MainActor.run { [weak self] in
-                            guard let self else { return }
-                            onSuccess()
-                        }
+                        let user = try await getProfile()
+                        await userDestination(with: user)
+
                     } catch {
                         await MainActor.run { [weak self] in
                             guard let self else { return }
@@ -99,6 +84,14 @@ extension Login {
                     }
                     break
                 case .failure(let error):
+                    
+                    try await client.logout()
+                    
+                    if let error = error as? Manager.Network.NetworkError {
+                        goToErrorView(with: .endpoint(error))
+                        return
+                    }
+                    
                     guard let error = error as? ASAuthorizationError else {
                         goToErrorView(with: .unknown)
                         return
@@ -121,28 +114,80 @@ extension Login {
             
             Task.detached(priority: .background) { [weak self] in
                 guard let self else { return }
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    goToLoadingView()
+                }
                 
                 do {
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        goToLoadingView()
-                    }
-                    
                     let _ = try await client.signInGoogle(idToken, accessToken)
                     
-                    // TODO: Move session to memory for reuse on endpoints
-                    // TODO: in loading scenary call profile endpoint for validate state in application ( if not has profile go to onboarding ).
+                    let user = try await getProfile()
+                    await userDestination(with: user)
+
+                } catch let error {
                     
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        onSuccess()
+                    try await client.logout()
+                    
+                    if let error = error as? Manager.Network.NetworkError {
+                        goToErrorView(with: .endpoint(error))
+                        return
                     }
-                } catch let err {
                     
-                    dump("What is error: \(err)")
+                    dump("What is error: \(error)")
                     goToErrorView(with: .googleSupabase)
                 }
             }
+        }
+        
+        // MARK: - Profile Data
+        
+        private func getProfile() async throws -> User {
+            do {
+                let data = try await network.get("/v1/profile")
+                #if DEBUG
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("Raw JSON:", jsonString)
+                }
+                #endif
+                let profile = try JSONDecoder().decode(User.self, from: data)
+                customDump(profile, name: "PROFILE")
+                
+                return profile
+            } catch let error{
+                throw error
+            }
+        }
+        
+        // MARK: - Destination
+        
+        @MainActor
+        private func userDestination(with user: User) {
+            if user.firstName != nil {
+                customDump(user.firstName)
+                onSuccess()
+            } else {
+                goToOnboarding(with: user)
+            }
+        }
+        
+        func goToCampaign(with index: Int) {
+            guard let tiles = tiles[index] else { return }
+            let model = Camping.Controller(tile: tiles)
+            
+            destination = .camping(model)
+        }
+        
+        private func goToLoadingView() {
+            destination = .isLoading(.init())
+        }
+        
+        private func goToErrorView(with error: LoginError.Controller.State) {
+            destination = .isError(.init(errorType: error))
+        }
+        
+        private func goToOnboarding(with user: User) {
+            destination = .onboarding(.init(user: user))
         }
         
         private func bind() {
@@ -156,6 +201,12 @@ extension Login {
                 }
                 break
             case .isLoading(_):
+                break
+            case .onboarding(let model):
+                model.onSuccess = {[weak self] in
+                    guard let self else { return }
+                    onSuccess()
+                }
                 break
             case .none:
                 break

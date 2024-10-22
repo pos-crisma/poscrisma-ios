@@ -47,18 +47,11 @@ extension Home {
                     dump("Starting to logout")
                     try await client.logout()
                     
-                    
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        isLoading = false
-                        onLogout()
-                    }
+                    isLoading = false
+                    onLogout()
                 } catch {
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        isLoading = false
-                        destination = .isError(.init())
-                    }
+                    isLoading = false
+                    destination = .isError(.init())
                 }
             }
         }

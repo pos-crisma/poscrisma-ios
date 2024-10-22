@@ -121,6 +121,9 @@ extension LoginError {
                 case .googleSupabase:
                     labelContent.text = "Erro para se finalizar a autenticação com a plataforma, tente novamente"
                     break
+                case .endpoint(let error):
+                    labelContent.text = "Erro para recuperar as informações do usuario. Codigo do erro: \(error)"
+                    break
                 case .unknown:
                     labelContent.text = "Erro desconhecido"
                     break
