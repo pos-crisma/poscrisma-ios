@@ -73,7 +73,7 @@ extension Login {
                         guard let idToken = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else { return }
                         
                         let _ = try await client.signInApple(idToken)
-                        let user = try await getProfile()
+                        let user = try await AppModel.User.getUserContent()
                         await userDestination(with: user)
 
                     } catch {
@@ -122,7 +122,7 @@ extension Login {
                 do {
                     let _ = try await client.signInGoogle(idToken, accessToken)
                     
-                    let user = try await getProfile()
+                    let user = try await AppModel.User.getUserContent()
                     await userDestination(with: user)
 
                 } catch let error {
@@ -134,35 +134,15 @@ extension Login {
                         return
                     }
                     
-                    dump("What is error: \(error)")
                     goToErrorView(with: .googleSupabase)
                 }
-            }
-        }
-        
-        // MARK: - Profile Data
-        
-        private func getProfile() async throws -> User {
-            do {
-                let data = try await network.get("/v1/profile")
-                #if DEBUG
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Raw JSON:", jsonString)
-                }
-                #endif
-                let profile = try JSONDecoder().decode(User.self, from: data)
-                customDump(profile, name: "PROFILE")
-                
-                return profile
-            } catch let error{
-                throw error
             }
         }
         
         // MARK: - Destination
         
         @MainActor
-        private func userDestination(with user: User) {
+        private func userDestination(with user: AppModel.User) {
             if user.firstName != nil {
                 customDump(user.firstName)
                 onSuccess()
@@ -186,9 +166,11 @@ extension Login {
             destination = .isError(.init(errorType: error))
         }
         
-        private func goToOnboarding(with user: User) {
+        private func goToOnboarding(with user: AppModel.User) {
             destination = .onboarding(.init(user: user))
         }
+        
+        // MARK: - Binding Destination actions
         
         private func bind() {
             switch destination {

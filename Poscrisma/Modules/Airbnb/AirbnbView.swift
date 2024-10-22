@@ -55,9 +55,10 @@ extension Airbnb {
         
         override func viewDidLoad() {
             super.viewDidLoad()
-            view.backgroundColor = .black
-            collectionView.backgroundColor = .black
+            view.backgroundColor = .systemBackground
+            collectionView.backgroundColor = .systemBackground
             collectionView.contentInsetAdjustmentBehavior = .never
+            collectionView.showsVerticalScrollIndicator = false
             collectionView.scrollDelegate = self
             
             view.addSubview(icon)
@@ -219,8 +220,6 @@ extension Airbnb {
             imageView.image = UIImage(named: content.imageName)
         }
     }
-    
-    // ... (rest of the custom row types remain the same)
     
     
     final class TextRow: UILabel, EpoxyableView {

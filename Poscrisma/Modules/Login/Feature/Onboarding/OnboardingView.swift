@@ -10,13 +10,14 @@ import UIKit
 import UIKitNavigation
 
 extension Onboarding {
-    final class ViewController: UIViewController {
+    final class ViewController: CollectionViewController {
         
         @UIBinding private var model: Controller
             
         init(model: Controller) {
             self.model = model
-            super.init(nibName: nil, bundle: nil)
+            super.init(layout: UICollectionViewCompositionalLayout.list(using: .init(appearance: .grouped)))
+            setSections(sections, animated: false)
         }
         
         required init?(coder: NSCoder) {
@@ -25,7 +26,40 @@ extension Onboarding {
         
         override func viewDidLoad() {
             super.viewDidLoad()
-            view.backgroundColor = .red
+            view.backgroundColor = .white
+            collectionView.backgroundColor = .white
+        }
+        
+        var sections: [SectionModel] {
+            [
+                SectionModel(items: items)
+            ]
+        }
+        
+        private enum DataIDs {
+            case title
+        }
+        
+        private var items: [ItemModeling] {
+            [
+                ItemModel<UILabel>(
+                    dataID: DataIDs.title,
+                    content: "This is my title",
+                    setContent: { content, value in
+                        content.view.text = value
+                        content.view.font = .systemFont(ofSize: 24, weight: .bold)
+                        content.view.textColor = .red
+                    }
+                ),
+                ItemModel<UILabel>(
+                    dataID: DataIDs.title,
+                    content: "This is my title",
+                    setContent: { content, value in
+                        content.view.text = value
+                        content.view.textColor = .red
+                    }
+                ),
+            ]
         }
     }
 }

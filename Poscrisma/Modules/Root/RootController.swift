@@ -48,16 +48,20 @@ extension Root {
         func verifyUserIsLogged() {
             Task {
                 do {
-                    guard let _ = try await client.getUser() else {
-                        goToLogin()
+                    let user = try await AppModel.User.getUserContent()
+                    
+                    if user.firstName != nil {
+                        goToHome()
                         return
                     }
                     
-                    goToHome()
+                    goToLogin()
+                    return
                     
-                } catch {
+                } catch let error {
                     customDump(error)
-                    
+                    goToLogin()
+                    return
                 }
             }
         }

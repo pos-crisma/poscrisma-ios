@@ -8,9 +8,6 @@
 import UIKit
 
 extension Login {
-    struct Model { }
-    
-    
     struct TileData: Equatable, Identifiable {
         let id = UUID()
         let title: String
@@ -31,47 +28,5 @@ extension Login {
         10: .init(title: "Acampamento 2023", location: "Brasilia, JK"),
         11: .init(title: "Acampamento 2024", location: "Brasilia, JK")
     ]
-    
-    
-    struct User: Codable {
-        let id: String
-        let firstName: String?
-        let lastName: String?
-        let email: String
-        
-        // CodingKeys para mapear os campos snake_case do JSON para camelCase do Swift
-        enum CodingKeys: String, CodingKey {
-            case id
-            case firstName = "first_name"
-            case lastName = "last_name"
-            case email
-        }
-    }
-
 }
 
-// Extensão para funcionalidades adicionais
-extension Login.User {
-    // Computed property para nome completo
-    var fullName: String {
-        [firstName, lastName]
-            .compactMap { $0 }
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
-    }
-    
-    // Helper para criar instâncias mock para testes
-    static func mock(
-        id: String = "123",
-        firstName: String? = "John",
-        lastName: String? = "Doe",
-        email: String = "john@example.com"
-    ) -> Login.User {
-        return Login.User(
-            id: id,
-            firstName: firstName,
-            lastName: lastName,
-            email: email
-        )
-    }
-}

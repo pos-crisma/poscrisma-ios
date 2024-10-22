@@ -12,13 +12,13 @@ extension Onboarding {
     
     @Observable
     class Controller: Identifiable {
-        let user: Login.User
+        let user: AppModel.User
         
         var onSuccess: () -> Void = {
             XCTFail("Onboarding.Controller.onSuccess unimplemented.")
         }
         
-        init(user: Login.User) {
+        init(user: AppModel.User) {
             self.user = user
         }
     }
