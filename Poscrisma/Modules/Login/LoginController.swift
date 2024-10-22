@@ -137,17 +137,15 @@ extension Login {
                         guard let self else { return }
                         onSuccess()
                     }
-                    
                 } catch let err {
-                    goToErrorView(with: .googleSupabase)
+                    
                     dump("What is error: \(err)")
+                    goToErrorView(with: .googleSupabase)
                 }
             }
         }
         
         private func bind() {
-            customDump(destination)
-            
             switch destination {
             case .camping(_):
                 break

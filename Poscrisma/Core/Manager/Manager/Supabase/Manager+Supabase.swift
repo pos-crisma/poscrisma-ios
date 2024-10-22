@@ -42,9 +42,15 @@ extension Manager.Supabase: DependencyKey {
             }
         }, signInGoogle: { idToken, accessToken in
             do {
-                return try await supabaseClient.auth.signInWithIdToken(credentials: .init(provider: .google,
-                                                                                          idToken: idToken,
-                                                                                          accessToken: accessToken))
+                
+                return try await supabaseClient.auth.signInWithIdToken(
+                    credentials: OpenIDConnectCredentials(
+                        provider: .google,
+                        idToken: idToken,
+                        accessToken: accessToken
+                    )
+                )
+                
             } catch let error {
                 throw SupabaseClientError.google(error.localizedDescription)
             }
