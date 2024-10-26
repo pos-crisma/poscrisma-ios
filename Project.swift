@@ -54,7 +54,7 @@ let project = Project(
                 .external(name: "SnapKit"),
                 .external(name: "Supabase"),
                 .external(name: "GoogleSignIn"),
-                .external(name: "GoogleSignInSwift")
+                .external(name: "Lottie")
             ],
             settings: .settings(configurations: [
                 .debug(name: "Debug", xcconfig: "./xcconfigs/Poscrisma.xcconfig"),

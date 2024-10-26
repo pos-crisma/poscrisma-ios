@@ -39,7 +39,7 @@ extension Airbnb {
             return button
         }()
         
-        private var headerImageView: ImageRow?
+        private var headerImageView: Row.ImageRow?
         private let headerHeight: CGFloat = 300 // Altura padrão do header
         private let maxHeaderHeight: CGFloat = 600 // Altura máxima do header durante o stretch
         
@@ -48,7 +48,7 @@ extension Airbnb {
             super.init(layout: UICollectionViewCompositionalLayout { sectionIndex, _ -> NSCollectionLayoutSection? in
                 switch sectionIndex {
                 case 0: return .stretchyHeader
-                default: return .list
+                default: return .list()
                 }
             })
         }
@@ -112,17 +112,17 @@ extension Airbnb {
             // Header Section
             SectionModel(dataID: SectionID.header) {
                 
-                TextRow.itemModel(
+                Row.TextRow.itemModel(
                     dataID: "title",
                     content: .init(title: "Dreamy A-Frame Cabin in the Woods"),
-                    style: .title)
-                TextRow.itemModel(
+                    style: .title())
+                Row.TextRow.itemModel(
                     dataID: "location",
                     content: .init(title: "Idyllwild-Pine Cove, California,\nUnited States"),
-                    style: .subtitle)
+                    style: .subtitle())
             }
             .supplementaryItems(ofKind: UICollectionView.elementKindSectionHeader, [
-                ImageRow.supplementaryItemModel(
+                Row.ImageRow.supplementaryItemModel(
                     dataID: "cabinImage",
                     content: .init(imageName: "cabin"),
                     style: .large
@@ -136,221 +136,49 @@ extension Airbnb {
             
             // Details Section
             SectionModel(dataID: SectionID.details) {
-                IconTextRow.itemModel(
+                Row.IconTextRow.itemModel(
                     dataID: "guests",
                     content: .init(icon: "person.2.fill", text: "5 guests"))
-                IconTextRow.itemModel(
+                Row.IconTextRow.itemModel(
                     dataID: "bedrooms",
                     content: .init(icon: "bed.double.fill", text: "2 bedrooms • 3 beds"))
-                IconTextRow.itemModel(
+                Row.IconTextRow.itemModel(
                     dataID: "bath",
                     content: .init(icon: "shower.fill", text: "1 bath"))
             }
-            .compositionalLayoutSection(.list)
+            .compositionalLayoutSection(.list())
             
             // Amenities Section
             SectionModel(dataID: SectionID.amenities) {
-                TextRow.itemModel(
+                Row.TextRow.itemModel(
                     dataID: "amenitiesTitle",
                     content: .init(title: "Amenities"),
-                    style: .sectionTitle)
-                IconTextRow.itemModel(
+                    style: .sectionTitle())
+                Row.IconTextRow.itemModel(
                     dataID: "entireHome",
                     content: .init(icon: "house.fill", text: "Entire home"))
-                IconTextRow.itemModel(
+                Row.IconTextRow.itemModel(
                     dataID: "enhancedClean",
                     content: .init(icon: "sparkles", text: "Enhanced Clean"))
             }
-            .compositionalLayoutSection(.list)
+            .compositionalLayoutSection(.list())
             
             // Price Section
             SectionModel(dataID: SectionID.price) {
-                ButtonRow.itemModel(
+                Row.ButtonRow.itemModel(
                     dataID: "checkAvailability",
                     content: .init(title: "Check availability"),
-                    style: .primary)
+                    style: .primary())
                 .didSelect { _ in
                     print("Check availability tapped")
                 }
             }
-            .compositionalLayoutSection(.list)
+            .compositionalLayoutSection(.list())
         }
         
         @objc private func onClose() {
             Manager.Haptic.shared.playHaptic(for: .impact(.medium))
             controller.onClose()
-        }
-    }
-    
-    // MARK: - Custom Row Types
-    
-    final class ImageRow: UIView, EpoxyableView {
-        private let imageView = UIImageView()
-        
-        private var heightConstraint: NSLayoutConstraint?
-        
-        enum Style {
-            case large
-        }
-        
-        init(style: Style) {
-            super.init(frame: .zero)
-            setupImageView(style: style)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func setupImageView(style: Style) {
-            addSubview(imageView)
-            imageView.contentMode = .scaleAspectFill
-            imageView.clipsToBounds = true
-            
-            imageView.snp.makeConstraints { make in
-                make.top.leading.trailing.bottom.equalToSuperview()
-            }
-        }
-        
-        struct Content: Equatable {
-            var imageName: String
-        }
-        
-        func setContent(_ content: Content, animated: Bool) {
-            imageView.image = UIImage(named: content.imageName)
-        }
-    }
-    
-    
-    final class TextRow: UILabel, EpoxyableView {
-        enum Style {
-            case title, subtitle, sectionTitle
-        }
-        
-        init(style: Style) {
-            super.init(frame: .zero)
-            setupLabel(style: style)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func setupLabel(style: Style) {
-            translatesAutoresizingMaskIntoConstraints = false
-            numberOfLines = 0
-            
-            switch style {
-            case .title:
-                font = UIFont.systemFont(ofSize: 24, weight: .bold)
-                textColor = .white
-            case .subtitle:
-                font = UIFont.systemFont(ofSize: 16)
-                textColor = .lightGray
-            case .sectionTitle:
-                font = UIFont.systemFont(ofSize: 20, weight: .semibold)
-                textColor = .white
-            }
-        }
-        
-        struct Content: Equatable {
-            var title: String
-        }
-        
-        func setContent(_ content: Content, animated: Bool) {
-            text = content.title
-        }
-    }
-    
-    final class IconTextRow: UIView, EpoxyableView {
-        private let iconImageView = UIImageView()
-        private let label = UILabel()
-        
-        init() {
-            super.init(frame: .zero)
-            setupViews()
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func setupViews() {
-            addSubview(iconImageView)
-            addSubview(label)
-            
-            
-            iconImageView.tintColor = .systemGray
-            label.textColor = .white
-            label.font = UIFont.systemFont(ofSize: 16)
-            
-            iconImageView.snp.makeConstraints { make in
-                make.leading.equalToSuperview()
-                make.centerY.equalToSuperview()
-                make.size.equalTo(CGSize(width: 24, height: 24))
-            }
-
-            label.snp.makeConstraints { make in
-                make.leading.equalTo(iconImageView.snp.trailing).offset(16)
-                make.trailing.equalToSuperview()
-                make.centerY.equalToSuperview()
-            }
-
-            self.snp.makeConstraints { make in
-                make.height.equalTo(44)
-            }
-            
-        }
-        
-        struct Content: Equatable {
-            var icon: String
-            var text: String
-        }
-        
-        func setContent(_ content: Content, animated: Bool) {
-            iconImageView.image = UIImage(systemName: content.icon)
-            label.text = content.text
-        }
-    }
-    
-    final class ButtonRow: UIButton, EpoxyableView {
-        enum Style {
-            case primary, secondary
-        }
-        
-        init(style: Style) {
-            super.init(frame: .zero)
-            setupButton(style: style)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        private func setupButton(style: Style) {
-            self.snp.makeConstraints { make in
-                make.height.equalTo(50)
-            }
-            
-            switch style {
-            case .primary:
-                backgroundColor = .systemPink
-                setTitleColor(.white, for: .normal)
-            case .secondary:
-                backgroundColor = .systemGray5
-                setTitleColor(.black, for: .normal)
-            }
-            
-            layer.cornerRadius = 8
-            titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        }
-        
-        struct Content: Equatable {
-            var title: String
-        }
-        
-        func setContent(_ content: Content, animated: Bool) {
-            setTitle(content.title, for: .normal)
         }
     }
 }
@@ -390,18 +218,16 @@ extension NSCollectionLayoutSection {
         return section
     }
     
-    static var list: NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                              heightDimension: .estimated(44))
+    static func list(spacing: CGFloat = 16, contentInsets: NSDirectionalEdgeInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)) -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .estimated(44))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(44))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 16
-        section.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+        section.interGroupSpacing = spacing
+        section.contentInsets = contentInsets
         
         return section
     }

@@ -7,6 +7,7 @@
 
 import Foundation
 import Dependencies
+
 extension Manager {
     struct Network: Sendable {
         // Configuration
@@ -17,8 +18,8 @@ extension Manager {
             
             static let `default` = Configuration(
                 baseURL: URL(string: "http://192.168.0.139:3300")!,
-                timeout: 30,
-                retryCount: 3
+                timeout: 1,
+                retryCount: 0
             )
         }
         

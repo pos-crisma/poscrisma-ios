@@ -42,6 +42,7 @@ extension Login {
             self.destination = destination
             
             bind()
+            goToOnboarding(with: .mock())
         }
         
         @CasePathable
@@ -74,7 +75,7 @@ extension Login {
                         
                         let _ = try await client.signInApple(idToken)
                         let user = try await AppModel.User.getUserContent()
-                        await userDestination(with: user)
+                        userDestination(with: user)
 
                     } catch {
                         await MainActor.run { [weak self] in
@@ -123,7 +124,7 @@ extension Login {
                     let _ = try await client.signInGoogle(idToken, accessToken)
                     
                     let user = try await AppModel.User.getUserContent()
-                    await userDestination(with: user)
+                    userDestination(with: user)
 
                 } catch let error {
                     
@@ -141,7 +142,6 @@ extension Login {
         
         // MARK: - Destination
         
-        @MainActor
         private func userDestination(with user: AppModel.User) {
             if user.firstName != nil {
                 customDump(user.firstName)

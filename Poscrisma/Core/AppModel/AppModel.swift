@@ -18,7 +18,6 @@ extension AppModel {
         let lastName: String?
         let email: String
         
-        @Dependency(\.network) static var network
         
         // CodingKeys para mapear os campos snake_case do JSON para camelCase do Swift
         enum CodingKeys: String, CodingKey {
@@ -32,6 +31,7 @@ extension AppModel {
 
 // Extensão para funcionalidades adicionais
 extension AppModel.User {
+    @Dependency(\.network) static var network
     
     // Computed property para nome completo
     var fullName: String {

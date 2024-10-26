@@ -7,6 +7,9 @@
     "Click me for sheet" : {
 
     },
+    "Key" : {
+      "extractionState" : "manual"
+    },
     "login.buble.app.name" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -105,6 +108,73 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conheça Acamps"
+          }
+        }
+      }
+    },
+    "onboarding.input.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Camping identification"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código acampamento"
+          }
+        }
+      }
+    },
+    "onboarding.label.info.1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora vamos continuar com o nome do acampamento"
+          }
+        }
+      }
+    },
+    "onboarding.label.info.2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse vai ser o código de identificação do acampamento."
+          }
+        }
+      }
+    },
+    "onboarding.label.info.3" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tem no máximo 10 caracteres."
+          }
+        }
+      }
+    },
+    "onboarding.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Acamps"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acampamento"
           }
         }
       }

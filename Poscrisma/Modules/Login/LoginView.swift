@@ -31,7 +31,7 @@ extension Login {
             .sheet(item: $controller.destination.camping) {
                 Camping.ViewController(model: $0)
             }
-            .fullScreenCover(item: $controller.destination.isLoading) { model in
+            .sheet(item: $controller.destination.isLoading) { model in
                 UIViewControllerRepresenting {
                     LoginLoading.ViewController(model: model)
                 }
@@ -42,14 +42,13 @@ extension Login {
                 UIViewControllerRepresenting {
                     LoginError.ViewController(model: model)
                 }
-                .ignoresSafeArea()
                 .presentationDetents([.medium])
             }
             .fullScreenCover(item: $controller.destination.onboarding) { model in
                 UIViewControllerRepresenting {
                     Onboarding.ViewController(model: model)
                 }
-                .ignoresSafeArea()
+                .preferredColorScheme(.light)
             }
         }
     }

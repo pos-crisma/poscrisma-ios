@@ -7,6 +7,7 @@
 
 import Epoxy
 import UIKit
+import SwiftUI
 import UIKitNavigation
 
 extension LoginError {
@@ -24,8 +25,7 @@ extension LoginError {
         lazy var labelTitle: UILabel = {
             let label = UILabel()
 
-            label.font = .systemFont(ofSize: 22, weight: .semibold)
-            label.textColor = .black
+            label.font = .systemFont(ofSize: 26, weight: .semibold)
             label.numberOfLines = 0
             return label
         }()
@@ -33,8 +33,7 @@ extension LoginError {
         lazy var labelContent: UILabel = {
             let label = UILabel()
 
-            label.font = .systemFont(ofSize: 16)
-            label.textColor = .black
+            label.font = .systemFont(ofSize: 20)
             label.numberOfLines = 0
             return label
         }()
@@ -71,8 +70,6 @@ extension LoginError {
         
         override func viewDidLoad() {
             super.viewDidLoad()
-            view.backgroundColor = .white
-            
             
             stack.addArrangedSubview(labelTitle)
             stack.addArrangedSubview(labelContent)
@@ -139,4 +136,8 @@ extension LoginError {
     }
 }
 
-
+#Preview {
+    UIViewControllerRepresenting {
+        LoginError.ViewController(model: .init(errorType: .endpoint(.connectionError("Erro de conexão"))))
+    }
+}

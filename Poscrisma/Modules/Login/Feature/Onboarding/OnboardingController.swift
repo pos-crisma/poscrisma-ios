@@ -14,6 +14,13 @@ extension Onboarding {
     class Controller: Identifiable {
         let user: AppModel.User
         
+        var text: String = "" {
+            didSet {
+                dump(text, name: "Text")
+            }
+        }
+        var isFocus: Bool = false
+        
         var onSuccess: () -> Void = {
             XCTFail("Onboarding.Controller.onSuccess unimplemented.")
         }
