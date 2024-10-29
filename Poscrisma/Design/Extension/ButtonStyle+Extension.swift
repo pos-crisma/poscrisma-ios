@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-extension ButtonStyle where Self == Style.ScaleButtonStyle {
-    static var scale: Style.ScaleButtonStyle {
-        Style.ScaleButtonStyle()
+extension ButtonStyle where Self == AppStyle.ScaleButtonStyle {
+    static var scale: AppStyle.ScaleButtonStyle {
+        AppStyle.ScaleButtonStyle()
     }
 }

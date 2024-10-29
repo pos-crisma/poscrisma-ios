@@ -17,7 +17,7 @@ extension LoginLoading {
         @UIBinding private var model: Controller
         
         private lazy var loadingView: LottieAnimationView = {
-            let animationView = LottieAnimationView(name: "loading_person_up_steps.json.json")
+            let animationView = LottieAnimationView(name: "loading_person_up_steps.json")
             animationView.loopMode = .loop
             return animationView
         }()

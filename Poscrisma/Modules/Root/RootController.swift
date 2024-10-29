@@ -48,7 +48,7 @@ extension Root {
         func verifyUserIsLogged() {
             Task {
                 do {
-                    let user = try await AppModel.User.getUserContent()
+                    let user = try await Service.User.getUserContent()
                     
                     if user.firstName != nil {
                         goToHome()

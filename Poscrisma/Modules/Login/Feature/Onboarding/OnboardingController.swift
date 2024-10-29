@@ -7,26 +7,66 @@
 
 import UIKit
 import XCTestDynamicOverlay
+import UIKitNavigation
 
 extension Onboarding {
     
     @Observable
     class Controller: Identifiable {
-        let user: AppModel.User
+        let user: Service.User
         
-        var text: String = "" {
-            didSet {
-                dump(text, name: "Text")
-            }
+        var destination: Destination? {
+            didSet { bind() }
         }
-        var isFocus: Bool = false
         
         var onSuccess: () -> Void = {
             XCTFail("Onboarding.Controller.onSuccess unimplemented.")
         }
         
-        init(user: AppModel.User) {
+        init(user: Service.User) {
             self.user = user
+            
+            bind()
+        }
+        
+        @CasePathable
+        enum Destination {
+            case notification(OnboardingNotification.Controller)
+            case campCode(OnboardingCodeCamping.Controller)
+            case userName(OnboardingUserName.Controller)
+            case step(OnboardingStep.Controller)
+        }
+        
+        func goToNotification() {
+            destination = .step(.init())
+        }
+        
+        private func bind() {
+            switch destination {
+            case .notification(let model):
+                model.onHandler = { [weak self] in
+                    guard let self else { return }
+                    destination = .campCode(.init(step: .create))
+                }
+                break
+            case .campCode(_):
+                break
+            case .userName(_):
+                break
+            case .step(let model):
+                model.onHandlerEntryCamping = { [weak self] in
+                    guard let self else { return }
+                    destination = .campCode(.init(step: .entry))
+                }
+                
+                model.onHandlerCreateCamping = { [weak self] in
+                    guard let self else { return }
+                    destination = .campCode(.init(step: .create))
+                }
+                break
+            case .none:
+                break
+            }
         }
     }
 }

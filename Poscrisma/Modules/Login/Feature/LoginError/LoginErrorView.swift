@@ -38,12 +38,12 @@ extension LoginError {
             return label
         }()
         
-        lazy var icon: Style.ScaleButton = {
+        lazy var icon: AppStyle.ScaleButton = {
             let icon = UIImage(systemName: "xmark.circle.fill")
             let imageView = UIImageView(image: icon)
             imageView.tintColor = .gray
             
-            let button = Style.ScaleButton()
+            let button = AppStyle.ScaleButton()
             button.setAction(onClose)
             button.setCustomContent(imageView)
             

@@ -112,7 +112,18 @@
         }
       }
     },
-    "onboarding.input.placeholder" : {
+    "onboarding.camps.code" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse vai ser o código de identificação do acampamento."
+          }
+        }
+      }
+    },
+    "onboarding.camps.code.input.placeholder" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -129,7 +140,7 @@
         }
       }
     },
-    "onboarding.label.info.1" : {
+    "onboarding.camps.code.label.info.1" : {
       "extractionState" : "manual",
       "localizations" : {
         "pt-BR" : {
@@ -140,29 +151,28 @@
         }
       }
     },
-    "onboarding.label.info.2" : {
+    "onboarding.camps.code.label.info.2" : {
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O codigo não pode ser maior de 10 caracteres"
+          }
+        }
+      }
+    },
+    "onboarding.camps.code.label.info.3" : {
       "extractionState" : "manual",
       "localizations" : {
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse vai ser o código de identificação do acampamento."
+            "value" : "Com esse código poderá, enviar a outros membros"
           }
         }
       }
     },
-    "onboarding.label.info.3" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tem no máximo 10 caracteres."
-          }
-        }
-      }
-    },
-    "onboarding.title" : {
+    "onboarding.camps.code.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -175,6 +185,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Acampamento"
+          }
+        }
+      }
+    },
+    "onboarding.initial.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vamos da inicio ao seu primeiro passo na construção do seu acampamento"
           }
         }
       }

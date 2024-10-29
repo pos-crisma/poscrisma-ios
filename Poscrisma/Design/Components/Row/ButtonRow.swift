@@ -13,15 +13,22 @@ import UIKit
 extension Row {
     final class ButtonRow: UIView, EpoxyableView {
         enum Style: Hashable {
-            case primary(CGFloat = 0, 
+            case primary(horizontalPadding: CGFloat = 0,
+                         verticalPadding: CGFloat = 0,
                          backgroundColor: UIColor = .black,
-                         tintColor: UIColor = .white)
-            case secondary(CGFloat = 0, 
+                         tintColor: UIColor = .white,
+                         alignment: NSTextAlignment = .center
+            )
+            case secondary(horizontalPadding: CGFloat = 0,
+                           verticalPadding: CGFloat = 0,
                            backgroundColor: UIColor = .black,
-                           tintColor: UIColor = .white)
+                           tintColor: UIColor = .white,
+                           alignment: NSTextAlignment = .center
+              )
         }
         
         init(style: Style) {
+            self.style = style
             super.init(frame: .zero)
             setupButton(style: style)
         }
@@ -30,46 +37,48 @@ extension Row {
             fatalError("init(coder:) has not been implemented")
         }
         
-        private var button = UIButton()
+        var button = AppStyle.ScaleButton()
         private var didTap: (() -> Void)?
+        private var style: Style
         
-        private var text: String? {
-            get { button.title(for: .normal) }
-            set { button.setTitle(newValue, for: .normal) }
-        }
+        private var text: String?
         
         private func setupButton(style: Style) {
             
             addSubview(button)
             switch style {
-            case let .primary(padding, backgroundColor, tintColor):
+            case let .primary(horizontalPadding, verticalPadding, backgroundColor, _, _):
                 button.snp.makeConstraints { make in
-                    make.height.equalTo(50)
-                    make.top.equalTo(snp_topMargin).offset(padding)
-                    make.leading.equalTo(snp_leadingMargin).offset(padding)
-                    make.bottom.equalTo(snp_bottomMargin).offset(-padding)
-                    make.trailing.equalTo(snp_trailingMargin).offset(-padding)
+                    make.height.equalTo(54)
+                    make.top.equalTo(snp_topMargin).offset(verticalPadding)
+                    make.leading.equalTo(snp_leadingMargin).offset(horizontalPadding)
+                    make.bottom.equalTo(snp_bottomMargin).offset(-verticalPadding)
+                    make.trailing.equalTo(snp_trailingMargin).offset(-horizontalPadding)
                 }
                 
                 button.backgroundColor = backgroundColor
-                button.setTitleColor(tintColor, for: .normal)
-            case let .secondary(padding, backgroundColor, tintColor):
+                button.layer.cornerRadius = 8
+                break
+            case let .secondary(horizontalPadding, verticalPadding, backgroundColor, _, _):
                 button.snp.makeConstraints { make in
-                    make.height.equalTo(50)
-                    make.top.equalTo(snp_topMargin).offset(padding)
-                    make.leading.equalTo(snp_leadingMargin).offset(padding)
-                    make.bottom.equalTo(snp_bottomMargin).offset(-padding)
-                    make.trailing.equalTo(snp_trailingMargin).offset(-padding)
+                    make.height.equalTo(54)
+                    make.top.equalTo(snp_topMargin).offset(verticalPadding)
+                    make.leading.equalTo(snp_leadingMargin).offset(horizontalPadding)
+                    make.bottom.equalTo(snp_bottomMargin).offset(-verticalPadding)
+                    make.trailing.equalTo(snp_trailingMargin).offset(-horizontalPadding)
                 }
                 
-                button.backgroundColor = backgroundColor
-                button.setTitleColor(tintColor, for: .normal)
+                button.backgroundColor = .clear
+                button.layer.borderColor = backgroundColor.cgColor
+                button.layer.borderWidth = 1
+                button.layer.cornerRadius = 8
+                break
             }
             
-            button.layer.cornerRadius = 8
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-            
-            button.addTarget(self, action: #selector(handleTap), for: .touchUpInside)
+            button.setAction { [weak self] in
+                guard let self else { return }
+                handleTap()
+            }
         }
         
         struct Content: Equatable {
@@ -81,7 +90,22 @@ extension Row {
         }
         
         func setContent(_ content: Content, animated: Bool) {
-            text = content.title
+        
+            let label = UILabel()
+            label.text = content.title
+            switch style {
+            case let .primary(_, _, _, tintColor, alignment):
+                label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+                label.textColor = tintColor
+                label.textAlignment = alignment
+                break
+            case let .secondary(_, _, _, tintColor, alignment):
+                label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
+                label.textColor = tintColor
+                label.textAlignment = alignment
+                break
+            }
+            button.setCustomContent(label)
         }
         
         func setBehaviors(_ behaviors: Behaviors?) {
@@ -93,3 +117,4 @@ extension Row {
         }
     }
 }
+

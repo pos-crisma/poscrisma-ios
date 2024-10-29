@@ -42,7 +42,6 @@ extension Login {
             self.destination = destination
             
             bind()
-            goToOnboarding(with: .mock())
         }
         
         @CasePathable
@@ -74,7 +73,7 @@ extension Login {
                         guard let idToken = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else { return }
                         
                         let _ = try await client.signInApple(idToken)
-                        let user = try await AppModel.User.getUserContent()
+                        let user = try await Service.User.getUserContent()
                         userDestination(with: user)
 
                     } catch {
@@ -123,7 +122,7 @@ extension Login {
                 do {
                     let _ = try await client.signInGoogle(idToken, accessToken)
                     
-                    let user = try await AppModel.User.getUserContent()
+                    let user = try await Service.User.getUserContent()
                     userDestination(with: user)
 
                 } catch let error {
@@ -142,7 +141,7 @@ extension Login {
         
         // MARK: - Destination
         
-        private func userDestination(with user: AppModel.User) {
+        private func userDestination(with user: Service.User) {
             if user.firstName != nil {
                 customDump(user.firstName)
                 onSuccess()
@@ -166,7 +165,7 @@ extension Login {
             destination = .isError(.init(errorType: error))
         }
         
-        private func goToOnboarding(with user: AppModel.User) {
+        private func goToOnboarding(with user: Service.User) {
             destination = .onboarding(.init(user: user))
         }
         

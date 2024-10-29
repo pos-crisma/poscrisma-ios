@@ -18,12 +18,12 @@ extension Airbnb {
             case header, subHeader, details, amenities, price
         }
         
-        lazy var icon: Style.ScaleButton = {
+        lazy var icon: AppStyle.ScaleButton = {
             let icon = UIImage(systemName: "xmark.circle.fill")
             let imageView = UIImageView(image: icon)
             imageView.tintColor = .white
             
-            let button = Style.ScaleButton()
+            let button = AppStyle.ScaleButton()
             button.setAction(onClose)
             button.setCustomContent(imageView)
             
@@ -39,7 +39,7 @@ extension Airbnb {
             return button
         }()
         
-        private var headerImageView: Row.ImageRow?
+        private var headerImageView: Row.Image?
         private let headerHeight: CGFloat = 300 // Altura padrão do header
         private let maxHeaderHeight: CGFloat = 600 // Altura máxima do header durante o stretch
         
@@ -122,7 +122,7 @@ extension Airbnb {
                     style: .subtitle())
             }
             .supplementaryItems(ofKind: UICollectionView.elementKindSectionHeader, [
-                Row.ImageRow.supplementaryItemModel(
+                Row.Image.supplementaryItemModel(
                     dataID: "cabinImage",
                     content: .init(imageName: "cabin"),
                     style: .large
@@ -136,13 +136,13 @@ extension Airbnb {
             
             // Details Section
             SectionModel(dataID: SectionID.details) {
-                Row.IconTextRow.itemModel(
+                Row.IconText.itemModel(
                     dataID: "guests",
                     content: .init(icon: "person.2.fill", text: "5 guests"))
-                Row.IconTextRow.itemModel(
+                Row.IconText.itemModel(
                     dataID: "bedrooms",
                     content: .init(icon: "bed.double.fill", text: "2 bedrooms • 3 beds"))
-                Row.IconTextRow.itemModel(
+                Row.IconText.itemModel(
                     dataID: "bath",
                     content: .init(icon: "shower.fill", text: "1 bath"))
             }
@@ -154,10 +154,10 @@ extension Airbnb {
                     dataID: "amenitiesTitle",
                     content: .init(title: "Amenities"),
                     style: .sectionTitle())
-                Row.IconTextRow.itemModel(
+                Row.IconText.itemModel(
                     dataID: "entireHome",
                     content: .init(icon: "house.fill", text: "Entire home"))
-                Row.IconTextRow.itemModel(
+                Row.IconText.itemModel(
                     dataID: "enhancedClean",
                     content: .init(icon: "sparkles", text: "Enhanced Clean"))
             }

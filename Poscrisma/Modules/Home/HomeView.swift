@@ -107,14 +107,14 @@ extension Home {
             return view
         }()
         
-        lazy var buttonPresentAirbnb: Style.ScaleButton = {
+        lazy var buttonPresentAirbnb: AppStyle.ScaleButton = {
             let label = UILabel()
             label.text = "Present Airbnb"
             label.font = .systemFont(ofSize: 16, weight: .bold)
             label.textColor = .white
             label.textAlignment = .center
             
-            let button = Style.ScaleButton()
+            let button = AppStyle.ScaleButton()
             button.setAction(handlerPresentAirbnb)
             button.setCustomContent(label)
             
@@ -124,14 +124,14 @@ extension Home {
             return button
         }()
         
-        lazy var buttonLogout: Style.ScaleButton = {
+        lazy var buttonLogout: AppStyle.ScaleButton = {
             let label = UILabel()
             label.text = "Logout"
             label.font = .systemFont(ofSize: 16, weight: .bold)
             label.textColor = .white
             label.textAlignment = .center
             
-            let button = Style.ScaleButton()
+            let button = AppStyle.ScaleButton()
             button.setAction(handlerLogout)
             button.setCustomContent(label)
             

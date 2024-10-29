@@ -40,13 +40,18 @@ extension Elements {
             var text: UIBinding<String>
             var isTextFocused: UIBinding<Bool>
             var placeHolder: String
+            var keyboardType = UIKeyboardType.default
+            var returnKey = UIReturnKeyType.done
         }
         
-        func setContent(_ content: Content,animated _: Bool) {
+        func setContent(_ content: Content, animated _: Bool) {
             bind(text: content.text)
             bind(focus: content.isTextFocused)
             
             placeholder = content.placeHolder
+            keyboardType = content.keyboardType
+            returnKeyType = content.returnKey
+            
         }
         
     }

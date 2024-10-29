@@ -1,17 +1,15 @@
 //
-//  Model.swift
+//  Service+User.swift
 //  Poscrisma
 //
-//  Created by Rodrigo Souza on 22/10/24.
+//  Created by Rodrigo Souza on 28/10/24.
 //
 
 import Foundation
 import Dependencies
 import CustomDump
 
-enum AppModel { }
-
-extension AppModel {
+extension Service {
     struct User: Codable {
         let id: String
         let firstName: String?
@@ -30,7 +28,7 @@ extension AppModel {
 }
 
 // Extensão para funcionalidades adicionais
-extension AppModel.User {
+extension Service.User {
     @Dependency(\.network) static var network
     
     // Computed property para nome completo

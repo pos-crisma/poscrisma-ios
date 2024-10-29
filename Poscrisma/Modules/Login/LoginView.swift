@@ -45,9 +45,7 @@ extension Login {
                 .presentationDetents([.medium])
             }
             .fullScreenCover(item: $controller.destination.onboarding) { model in
-                UIViewControllerRepresenting {
-                    Onboarding.ViewController(model: model)
-                }
+                Onboarding.ViewController(controller: model)
                 .preferredColorScheme(.light)
             }
         }

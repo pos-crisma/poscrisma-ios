@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import UIKit
 
-enum Style {
+enum AppStyle {
     struct ScaleButtonStyle: ButtonStyle {
         public init() {}
         
