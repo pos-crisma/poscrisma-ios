@@ -13,8 +13,6 @@ extension Onboarding {
     
     @Observable
     class Controller: Identifiable {
-        let user: Service.User
-        
         var destination: Destination? {
             didSet { bind() }
         }
@@ -23,9 +21,7 @@ extension Onboarding {
             XCTFail("Onboarding.Controller.onSuccess unimplemented.")
         }
         
-        init(user: Service.User) {
-            self.user = user
-            
+        init() {
             bind()
         }
         
@@ -49,7 +45,18 @@ extension Onboarding {
                     destination = .campCode(.init(step: .create))
                 }
                 break
-            case .campCode(_):
+            case .campCode(let model):
+                model.onSuccessCreate = { [weak self] name, address, code in
+                    guard let self else { return }
+                    
+                    onSuccess()
+                }
+                
+                model.onSuccessInvite = { [weak self] code in
+                    guard let self else { return }
+                    
+                    onSuccess()
+                }
                 break
             case .userName(_):
                 break

@@ -7,6 +7,7 @@
 
 import Foundation
 import Dependencies
+import CustomDump
 
 extension Manager {
     struct Network: Sendable {
@@ -17,8 +18,8 @@ extension Manager {
             let retryCount: Int
             
             static let `default` = Configuration(
-                baseURL: URL(string: "http://192.168.1.5:3300")!,
-                timeout: 1,
+                baseURL: URL(string: "http://192.168.15.75:3300")!,
+                timeout: 0,
                 retryCount: 0
             )
         }
@@ -83,6 +84,12 @@ extension Manager.Network: DependencyKey {
                 case 400...599:
                     // Tenta decodificar o erro do serviço
                     do {
+                        #if DEBUG
+                        if let jsonString = String(data: data, encoding: .utf8) {
+                            print("Error - Raw JSON:", jsonString)
+                        }
+                        #endif
+                        
                         let serviceError = try JSONDecoder().decode(ServiceException.self, from: data)
                         
                         // Se for erro 5xx e ainda houver tentativas, faz retry
@@ -119,6 +126,9 @@ extension Manager.Network: DependencyKey {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("json", forHTTPHeaderField: "X-Requested-With")
+        request.setValue("application/json", forHTTPHeaderField: "Accept-Encoding")
+        
     }
     
     // Custom Network Errors

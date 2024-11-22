@@ -46,8 +46,9 @@ extension Service.Camping {
             campingCode: campingCode,
             name: name
         )
-        
+        print("data JSON:", request)
         let jsonData = try JSONEncoder().encode(request)
+        print("data JSON:", jsonData)
         
         do {
             let data = try await Self.network.post("/v1/camping/create", jsonData)

@@ -73,8 +73,8 @@ extension Login {
                         guard let idToken = credential.identityToken.flatMap({ String(data: $0, encoding: .utf8) }) else { return }
                         
                         let _ = try await client.signInApple(idToken)
-                        let user = try await Service.User.getUserContent()
-                        userDestination(with: user)
+                        let campings = try await Service.MemberCamping.getUserHasCamping()
+                        campingsDestination(with: campings)
 
                     } catch {
                         await MainActor.run { [weak self] in
@@ -122,8 +122,8 @@ extension Login {
                 do {
                     let _ = try await client.signInGoogle(idToken, accessToken)
                     
-                    let user = try await Service.User.getUserContent()
-                    userDestination(with: user)
+                    let campings = try await Service.MemberCamping.getUserHasCamping()
+                    campingsDestination(with: campings)
 
                 } catch let error {
                     
@@ -141,12 +141,11 @@ extension Login {
         
         // MARK: - Destination
         
-        private func userDestination(with user: Service.User) {
-            if user.firstName != nil {
-                customDump(user.firstName)
-                onSuccess()
+        private func campingsDestination(with value: Service.MemberCampingResponse) {
+            if value.campings.isEmpty {
+                goToOnboarding()
             } else {
-                goToOnboarding(with: user)
+                onSuccess()
             }
         }
         
@@ -165,8 +164,8 @@ extension Login {
             destination = .isError(.init(errorType: error))
         }
         
-        private func goToOnboarding(with user: Service.User) {
-            destination = .onboarding(.init(user: user))
+        private func goToOnboarding() {
+            destination = .onboarding(.init())
         }
         
         // MARK: - Binding Destination actions

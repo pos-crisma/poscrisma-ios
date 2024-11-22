@@ -46,18 +46,15 @@ extension Root {
         }
         
         func verifyUserIsLogged() {
-            Task {
+            Task(priority: .background) {
                 do {
-                    let user = try await Service.User.getUserContent()
+                    let campings = try await Service.MemberCamping.getUserHasCamping()
                     
-                    if user.firstName != nil {
+                    if campings.campings.isEmpty {
+                        goToLogin()
+                    } else {
                         goToHome()
-                        return
                     }
-                    
-                    goToLogin()
-                    return
-                    
                 } catch let error {
                     customDump(error)
                     goToLogin()

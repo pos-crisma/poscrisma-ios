@@ -13,7 +13,7 @@ extension OnboardingCodeCamping {
     final class ViewController: CollectionViewController, UIScrollViewDelegate, UICollectionViewDelegate {
         @UIBinding private var model: Controller
         
-        private lazy var bottomBarInstaller = BottomBarInstaller(viewController: self, bars: bars)
+        private lazy var bottomBarInstaller = BottomBarInstaller(viewController: self)
         
         private enum SectionID {
             case header
@@ -55,6 +55,7 @@ extension OnboardingCodeCamping {
             observe { [weak self] in
                 guard let self else { return }
                 setSections(sections, animated: false)
+                bottomBarInstaller.setBars(bars, animated: true)
             }
             
             present(item: $model.destination.loading) { model in
@@ -170,11 +171,16 @@ extension OnboardingCodeCamping {
         @BarModelBuilder private var bars: [BarModeling] {
             Row.ButtonRow.barModel(
                 content: .init(title: "Continuar"),
-                behaviors: .init(didTap: {
-//                    self.model.destination = .loading(.init())
-                }),
+                behaviors: .init(didTap: model.initOnboardingFlow),
                 style: .primary(horizontalPadding: 12, backgroundColor: .black, tintColor: .white)
             )
+            .willDisplay { [weak self] context in
+                guard let self else { return }
+                observe {
+                    context.view.button.layer.opacity = self.model.hasValidation ? 1 : 0.4
+                    context.view.button.isEnabled = self.model.hasValidation
+                }
+            }
         }
     }
 }

@@ -74,5 +74,3 @@ extension LoginLoading {
         LoginLoading.ViewController(model: .init())
     }
 }
-
-
