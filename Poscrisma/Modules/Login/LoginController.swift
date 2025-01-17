@@ -142,7 +142,7 @@ extension Login {
         // MARK: - Destination
         
         private func campingsDestination(with value: Service.MemberCampingResponse) {
-            if value.campings.isEmpty {
+			if value.data.isEmpty {
                 goToOnboarding()
             } else {
                 onSuccess()

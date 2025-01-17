@@ -18,7 +18,7 @@ extension Manager {
             let retryCount: Int
             
             static let `default` = Configuration(
-                baseURL: URL(string: "http://192.168.15.75:3300")!,
+                baseURL: URL(string: "http://192.168.0.139:3300")!,
                 timeout: 0,
                 retryCount: 0
             )

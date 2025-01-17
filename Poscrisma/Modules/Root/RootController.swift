@@ -50,14 +50,20 @@ extension Root {
                 do {
                     let campings = try await Service.MemberCamping.getUserHasCamping()
                     
-                    if campings.campings.isEmpty {
-                        goToLogin()
+                    if campings.data.isEmpty {
+						await MainActor.run {
+							goToLogin()
+						}
                     } else {
-                        goToHome()
+						await MainActor.run {
+							goToHome()
+						}
                     }
                 } catch let error {
                     customDump(error)
-                    goToLogin()
+					await MainActor.run {
+						goToLogin()
+					}
                     return
                 }
             }

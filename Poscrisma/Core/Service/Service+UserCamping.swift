@@ -13,7 +13,7 @@ extension Service {
     
     // MARK: - Root Response
     struct MemberCampingResponse: Codable {
-        let campings: [MemberCamping]
+        let data: [MemberCamping]
     }
 
     // MARK: - Camping
@@ -72,6 +72,7 @@ extension Service.MemberCamping {
                 print("Raw JSON:", jsonString)
             }
             #endif
+
             let profile = try Service.MemberCampingResponse.decode(from: data)
             customDump(profile, name: "MemberCampingResponse")
             
