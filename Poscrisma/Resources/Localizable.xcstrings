@@ -4,7 +4,10 @@
     "2024, %@" : {
 
     },
-    "Click me for sheet" : {
+    "Floating Video Player" : {
+
+    },
+    "Hello From Sheet!" : {
 
     },
     "Key" : {
@@ -112,6 +115,9 @@
         }
       }
     },
+    "Message" : {
+
+    },
     "onboarding.camps.code" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -200,10 +206,13 @@
         }
       }
     },
-    "This is a full screen cover" : {
+    "Show Dummy Sheet" : {
 
     },
-    "This is a sheet" : {
+    "Tete" : {
+
+    },
+    "Universal Overlay" : {
 
     }
   },

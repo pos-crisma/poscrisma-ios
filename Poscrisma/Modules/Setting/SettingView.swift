@@ -14,19 +14,19 @@ extension Setting {
         
         private let collectionView: UICollectionView = {
             let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
-                switch sectionIndex {
-                case 0:
-                    // Seção da Imagem com Parallax
-                    return ViewController.createParallaxHeaderSection()
-                case 1:
-                    // Seção com Título, Avaliações e Localização
-                    return ViewController.createInfoSection()
-                case 2:
-                    // Seção de Atributos da Propriedade
-                    return ViewController.createAttributesSection()
-                default:
-                    return nil
-                }
+				switch sectionIndex {
+				case 0:
+					// Seção da Imagem com Parallax
+					return ViewController.createParallaxHeaderSection()
+				case 1:
+					// Seção com Título, Avaliações e Localização
+					return ViewController.createInfoSection()
+				case 2:
+					// Seção de Atributos da Propriedade
+					return ViewController.createAttributesSection()
+				default:
+					return nil
+				}
             }
             let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
             collectionView.backgroundColor = .white

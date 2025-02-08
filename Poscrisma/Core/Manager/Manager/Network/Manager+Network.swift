@@ -18,9 +18,9 @@ extension Manager {
             let retryCount: Int
             
             static let `default` = Configuration(
-                baseURL: URL(string: "http://192.168.0.139:3300")!,
-                timeout: 0,
-                retryCount: 0
+                baseURL: URL(string: "https://poscrisma-backend-production.up.railway.app")!,
+                timeout: 15,
+                retryCount: 3
             )
         }
         

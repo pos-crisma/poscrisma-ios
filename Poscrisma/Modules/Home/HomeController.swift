@@ -5,8 +5,6 @@
 //  Created by Rodrigo Souza on 11/09/2024.
 //
 
-import UIKit
-import SwiftUI
 import UIKitNavigation
 import XCTestDynamicOverlay
 import Dependencies

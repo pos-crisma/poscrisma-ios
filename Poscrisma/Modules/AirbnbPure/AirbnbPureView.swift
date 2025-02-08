@@ -43,7 +43,6 @@ class StretchyHeaderView: UICollectionReusableView {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.image = UIImage(named: "cabin")
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()

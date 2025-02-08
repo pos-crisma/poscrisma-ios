@@ -10,30 +10,6 @@ import SwiftUI
 import UIKitNavigation
 import SnapKit
 
-import SwiftUI
-
-
-struct ContentView: View {
-    
-    @State var sheet = false
-    @State var cover = false
-    
-    var body: some View {
-        Button("Click me for sheet") {
-            sheet = true
-        }
-        .fullScreenCover(isPresented: $cover) {
-            Text("This is a full screen cover")
-        }
-        .sheet(isPresented: $sheet, onDismiss: {cover = true}) {
-            Text("This is a sheet")
-        }
-    }
-}
-
-#Preview {
-    ContentView()
-}
 
 
 extension Home {
