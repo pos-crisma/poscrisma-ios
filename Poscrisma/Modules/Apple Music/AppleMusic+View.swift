@@ -178,59 +178,77 @@ extension AppleMusic {
 				let size = $0.size
 				let safeArea = $0.safeAreaInsets
 
-				ZStack(alignment: .top) {
-					ZStack {
-						Rectangle()
-							.fill(.playerBackground)
-
-						Rectangle()
-							.fill(.linearGradient(colors: [.artwork1, .artwork2, .artwork3], startPoint: .top, endPoint: .bottom))
+				if #available(iOS 18.0, *) {
+					ZStack(alignment: .top) {
+						ZStack {
+							Rectangle()
+								.fill(.playerBackground)
+							
+							Rectangle()
+								.fill(.linearGradient(colors: [.artwork1, .artwork2, .artwork3], startPoint: .top, endPoint: .bottom))
+								.opacity(expandPlayer ? 1 : 0)
+							
+						}
+						.clipShape(.rect(cornerRadius: 16))
+						.frame(height: expandPlayer ? nil : 55)
+						.shadow(color: .primary.opacity(0.06), radius: 5, x: 5, y: 5)
+						.shadow(color: .primary.opacity(0.05), radius: 5, x: -5, y: -5)
+						
+						MiniPlayer()
+							.opacity(expandPlayer ? 0 : 1)
+						
+						ExpandedPlayer(size, safeArea)
 							.opacity(expandPlayer ? 1 : 0)
-
 					}
-					.clipShape(.rect(cornerRadius: 16))
-					.frame(height: expandPlayer ? nil : 55)
-					.shadow(color: .primary.opacity(0.06), radius: 5, x: 5, y: 5)
-					.shadow(color: .primary.opacity(0.05), radius: 5, x: -5, y: -5)
+					.frame(height: expandPlayer ? nil : 55, alignment: .top)
+					.frame(maxHeight: .infinity, alignment: .bottom)
+					.padding(.bottom, expandPlayer ? 0 : safeArea.bottom + 55)
+					.padding(.horizontal, expandPlayer ? 0 : 16)
+					.offset(y: offsetY)
+					.gesture(
+						PanGesture { value in
+							if expandPlayer {
+								let translation = max(value.translation.height, 0)
+								offsetY = translation
+								windowProgress = max(min(translation / size.height, 1), 0) * 0.1
 
-					MiniPlayer()
-						.opacity(expandPlayer ? 0 : 1)
-
-					ExpandedPlayer(size, safeArea)
-						.opacity(expandPlayer ? 1 : 0)
-				}
-				.frame(height: expandPlayer ? nil : 55, alignment: .top)
-				.frame(maxHeight: .infinity, alignment: .bottom)
-				.padding(.bottom, expandPlayer ? 0 : safeArea.bottom + 55)
-				.padding(.horizontal, expandPlayer ? 0 : 16)
-				.offset(y: offsetY)
-				.gesture(
-					PanGesture { value in
-						let translation = max(value.translation.height, 0)
-						offsetY = translation
-						windowProgress = max(min(translation / size.height, 1), 0) * 0.1
-
-						resizeWindow(0.1 - windowProgress)
-					} onEnd: { value in
-						let translation = max(value.translation.height, 0)
-						let velocity = value.velocity.height / 5
-
-						withAnimation(.smooth(duration: 0.3, extraBounce: 0)) {
-							if (translation + velocity) > (size.height * 0.5) {
-								expandPlayer = false
-
-								resetWindowWithAnimation()
+								resizeWindow(0.1 - windowProgress)
 							} else {
-								UIView.animate(withDuration: 0.3) {
-									resizeWindow(0.1)
+								let translation = max(value.translation.height, 0)
+								offsetY = translation
+							}
+						} onEnd: { value in
+							if expandPlayer {
+								let translation = max(value.translation.height, 0)
+								let velocity = value.velocity.height / 5
+
+								withAnimation(.smooth(duration: 0.3, extraBounce: 0)) {
+									if (translation + velocity) > (size.height * 0.5) {
+										expandPlayer = false
+
+										resetWindowWithAnimation()
+									} else {
+										UIView.animate(withDuration: 0.3) {
+											resizeWindow(0.1)
+										}
+									}
+
+									offsetY = 0
+								}
+							} else {
+								let translation = max(value.translation.height, 0)
+								let velocity = value.velocity.height / 5
+
+								withAnimation(.smooth(duration: 0.3, extraBounce: 0)) {
+									offsetY = 0
 								}
 							}
-
-							offsetY = 0
 						}
-					}
-				)
-				.ignoresSafeArea()
+					)
+					.ignoresSafeArea()
+				} else {
+					// Fallback on earlier versions
+				}
 			}
 			.onAppear {
 				if let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow, mainWindow == nil {

@@ -1,13 +1,37 @@
 {
   "sourceLanguage" : "pt-BR",
   "strings" : {
+    "" : {
+
+    },
+    "12" : {
+
+    },
     "2024, %@" : {
+
+    },
+    "About" : {
+
+    },
+    "About view" : {
+
+    },
+    "Calm Down" : {
 
     },
     "Floating Video Player" : {
 
     },
     "Hello From Sheet!" : {
+
+    },
+    "Home" : {
+
+    },
+    "Home view" : {
+
+    },
+    "Home View" : {
 
     },
     "Key" : {
@@ -206,10 +230,19 @@
         }
       }
     },
-    "Show Dummy Sheet" : {
+    "Profile" : {
 
     },
-    "Tete" : {
+    "Profile view" : {
+
+    },
+    "Recentes" : {
+
+    },
+    "Rema, Selena Gomez" : {
+
+    },
+    "Show Dummy Sheet" : {
 
     },
     "Universal Overlay" : {
