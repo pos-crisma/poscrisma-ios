@@ -19,6 +19,12 @@ extension ApplePhoto {
 		/// Scroll Positions
 		var detailScrollPosition: String?
 
+		func didDetailPageChanged() {
+			if let updatedItem = items.first(where: { $0.id == detailScrollPosition }) {
+				selectedItem = updatedItem
+			}
+		}
+
 		func toggleView(show: Bool) {
 			if show {
 				detailScrollPosition = selectedItem?.id
@@ -28,17 +34,18 @@ extension ApplePhoto {
 					self.showDetailView = true
 				}
 			} else {
+				self.showDetailView = false
 				withAnimation(.easeInOut(duration: 0.2)) {
-					self.showDetailView = false
+					self.animateView = false
 				} completion: {
-					withAnimation(.snappy(duration: 0.2)) {
-						self.animateView = false
-					} completion: {
-						self.selectedItem = nil
-						self.detailScrollPosition = nil
-					}
+					self.resetAnimationProperties()
 				}
 			}
+		}
+
+		func resetAnimationProperties() {
+			selectedItem = nil
+			detailScrollPosition = nil 
 		}
 	}
 }
