@@ -18,10 +18,21 @@ extension ApplePhoto {
 		var showDetailView: Bool = false
 		/// Scroll Positions
 		var detailScrollPosition: String?
+		var detailIndicatorPosition: String?
+		/// Gesture Properties
+		var offset: CGSize = .zero
+		var dragProgress: CGFloat = 0
 
 		func didDetailPageChanged() {
 			if let updatedItem = items.first(where: { $0.id == detailScrollPosition }) {
 				selectedItem = updatedItem
+			}
+		}
+
+		func didDetailIndicatorPageChanged() {
+			if let updatedItem = items.first(where: { $0.id == detailIndicatorPosition  }) {
+				selectedItem = updatedItem
+				detailScrollPosition = updatedItem.id
 			}
 		}
 
@@ -35,8 +46,9 @@ extension ApplePhoto {
 				}
 			} else {
 				self.showDetailView = false
-				withAnimation(.easeInOut(duration: 0.2)) {
-					self.animateView = false
+				withAnimation(.easeInOut(duration: 0.2), completionCriteria: .removed) {
+					animateView = false
+					offset = .zero
 				} completion: {
 					self.resetAnimationProperties()
 				}
@@ -45,7 +57,10 @@ extension ApplePhoto {
 
 		func resetAnimationProperties() {
 			selectedItem = nil
-			detailScrollPosition = nil 
+			detailScrollPosition = nil
+			detailIndicatorPosition = nil
+			dragProgress = 0
+			offset = .zero
 		}
 	}
 }
