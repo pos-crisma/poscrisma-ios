@@ -11,16 +11,19 @@ extension ApplePhoto {
 	@Observable
 	class UICoordinator {
 		var items: [ApplePhoto.Item] = ApplePhoto.Item.sampleItems
+
+		/// Animation Properties
 		var selectedItem: ApplePhoto.Item?
 		var animateView: Bool = false
 		var showDetailView: Bool = false
+		/// Scroll Positions
 		var detailScrollPosition: String?
 
 		func toggleView(show: Bool) {
 			if show {
-				withAnimation(.snappy(duration: 0.2)) {
+				detailScrollPosition = selectedItem?.id
+				withAnimation(.easeInOut(duration: 0.2), completionCriteria: .removed) {
 					animateView = true
-					detailScrollPosition = selectedItem?.id
 				} completion: {
 					self.showDetailView = true
 				}

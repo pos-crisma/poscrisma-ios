@@ -13,13 +13,11 @@ extension ApplePhoto {
 
 		var body: some View {
 			ScrollView(.vertical) {
-				LazyVGrid(columns: Array(repeating: GridItem(spacing: 3), count: 3)) {
+				LazyVGrid(columns: Array(repeating: GridItem(spacing: 3), count: 3), spacing: 3) {
 					ForEach(coordinator.items) { item in
 						GridImageView(item)
 							.onTapGesture {
-								withAnimation(.snappy(duration: 0.35)) {
-									coordinator.selectedItem = item
-								}
+								coordinator.selectedItem = item
 							}
 					}
 				}
@@ -136,7 +134,7 @@ extension ApplePhoto {
 				Image(uiImage: image)
 					.resizable()
 					.aspectRatio(contentMode: .fit)
-					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.frame(width: size.width, height: size.height)
 					.clipped()
 					.contentShape(.rect)
 			}
@@ -161,20 +159,19 @@ extension ApplePhoto {
 					height: animateView ? dRect.height : sRect.height
 				)
 
-				let viewPosition = CGPoint(
-					x: animateView ? dRect.minX : sRect.minX,
-					y: animateView ? dRect.minY : sRect.minY
+				let viewPosition: CGSize = .init(
+					width: animateView ? dRect.minX : sRect.minX,
+					height: animateView ? dRect.minY : sRect.minY
 				)
 
-				if let image = item.image {
+				if let image = item.image, !coordinator.showDetailView {
 					Image(uiImage: image)
 						.resizable()
 						.aspectRatio(contentMode: animateView ? .fit : .fill)
 						.frame(width: viewSize.width, height: viewSize.height)
 						.clipShape(.rect)
-						.position(x: viewPosition.x + viewSize.width / 2, 
-								y: viewPosition.y + viewSize.height / 2)
-						.animation(.snappy(duration: 0.35), value: animateView)
+						.offset(viewPosition)
+						.transition(.identity)
 				}
 			}
 		}
