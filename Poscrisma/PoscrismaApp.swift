@@ -15,7 +15,7 @@ struct PoscrismaApp: App {
     var body: some Scene {
         WindowGroup {
 			RootView {
-				ApplePhoto.ContentView()
+				AppleMusic.Screen()
 //				Root.ViewController(controller: .init())
 //					.onOpenURL { url in
 //						GIDSignIn.sharedInstance.handle(url)

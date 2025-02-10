@@ -236,8 +236,8 @@ extension AppleMusic {
 									offsetY = 0
 								}
 							} else {
-								let translation = max(value.translation.height, 0)
-								let velocity = value.velocity.height / 5
+//								let translation = max(value.translation.height, 0)
+//								let velocity = value.velocity.height / 5
 
 								withAnimation(.smooth(duration: 0.3, extraBounce: 0)) {
 									offsetY = 0

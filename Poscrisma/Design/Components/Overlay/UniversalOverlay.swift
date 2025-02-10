@@ -140,11 +140,3 @@ fileprivate final class PassThroughWindow: UIWindow {
 		}
 	}
 }
-
-#Preview {
-	RootView {
-		VStack {
-			Text("Tete")
-		}
-	}
-}
