@@ -19,7 +19,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "org.poscrisma.poscrisma",
-            deploymentTargets: .iOS("17.0"),
+            deploymentTargets: .iOS("18.0"),
             infoPlist: .extendingDefault(with: [
                 "GIDClientID": "957554883675-p5nhmmsq1trveae4d821bhmfrjv8hq93.apps.googleusercontent.com",
                 "CFBundleURLTypes": [
