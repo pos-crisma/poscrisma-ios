@@ -9,12 +9,29 @@ import UIKitNavigation
 import XCTestDynamicOverlay
 import Dependencies
 import CustomDump
+import SwiftUI
 
 extension Home {
     @Observable
     class Controller {
         var isLoading = false
 		var showReplay = true
+
+        var tabs: [CategoryTab] = [
+			.init(id: CategoryTab.Tab.research),
+            .init(id: CategoryTab.Tab.development), 
+            .init(id: CategoryTab.Tab.analytics),
+            .init(id: CategoryTab.Tab.audience),
+            .init(id: CategoryTab.Tab.content),
+            .init(id: CategoryTab.Tab.settings),
+            .init(id: CategoryTab.Tab.help)
+        ]
+		var activeTab: CategoryTab.Tab = .research
+		var tabBarScrollState: CategoryTab.Tab?
+		var mainViewScrollState: CategoryTab.Tab?
+
+		var progress: CGFloat = .zero
+
 
         var onLogout: () -> Void = {
             XCTFail("Login.Controller.onSuccess unimplemented.")
