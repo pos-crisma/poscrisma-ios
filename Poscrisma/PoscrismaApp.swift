@@ -15,12 +15,11 @@ struct PoscrismaApp: App {
     var body: some Scene {
         WindowGroup {
 			RootView {
-				AppleMusic.Screen()
-//				Root.ViewController(controller: .init())
-//					.onOpenURL { url in
-//						GIDSignIn.sharedInstance.handle(url)
-//					}
-//					.ignoresSafeArea()
+				Root.ViewController(controller: .init())
+					.onOpenURL { url in
+						GIDSignIn.sharedInstance.handle(url)
+					}
+					.ignoresSafeArea()
 			}
         }
     }

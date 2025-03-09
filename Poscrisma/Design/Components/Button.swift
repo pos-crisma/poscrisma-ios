@@ -17,7 +17,7 @@ enum AppStyle {
             configuration.label
                 .scaleEffect(configuration.isPressed ? 0.95 : 1)
                 .animation(.linear(duration: 0.2), value: configuration.isPressed)
-                .brightness(configuration.isPressed ? -0.05 : 0)
+                .brightness(configuration.isPressed ? -0.02 : 0)
         }
     }
     

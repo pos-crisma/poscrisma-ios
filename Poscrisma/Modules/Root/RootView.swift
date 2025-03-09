@@ -23,7 +23,6 @@ extension Root {
                 case .home(let model):
                     NavigationStack {
                         Home.ViewController(controller: model)
-                            .ignoresSafeArea()
                     }
                 case .none:
                     Rectangle()

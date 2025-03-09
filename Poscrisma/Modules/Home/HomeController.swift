@@ -14,7 +14,8 @@ extension Home {
     @Observable
     class Controller {
         var isLoading = false
-        
+		var showReplay = true
+
         var onLogout: () -> Void = {
             XCTFail("Login.Controller.onSuccess unimplemented.")
         }
@@ -53,7 +54,11 @@ extension Home {
                 }
             }
         }
-        
+
+		func handleReplay() {
+			showReplay = false
+		}
+
         func presentAirbnb() {
             destination = .airbnb(.init())
         }

@@ -5,21 +5,15 @@
 //  Created by Rodrigo Souza on 11/09/2024.
 //
 
-import Epoxy
 import SwiftUI
 import UIKitNavigation
-import SnapKit
-
-
 
 extension Home {
     struct ViewController: View {
         @State var controller: Controller
         
         var body: some View {
-            UIViewControllerRepresenting {
-                Screen(controller: controller)
-            }
+            Screen(controller: controller)
             .fullScreenCover(item: $controller.destination.airbnb) { model in
                 UIViewControllerRepresenting {
                     Airbnb.ViewController(controller: model)
@@ -35,154 +29,150 @@ extension Home {
         }
     }
     
-    final class Screen: UIViewController {
-        
-        @UIBinding var controller: Controller
-        
-        init(controller: Controller) {
-            self.controller = controller
-            super.init(nibName: nil, bundle: nil)
-        }
-        
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        lazy var labelTitle: UILabel = {
-            let label = UILabel()
-            label.text = """
-            Essas mudanças garantem que seus labels respeitem a *Safe Area*, evitando que fiquem sob a barra de status, o notch (se houver) ou outros elementos da interface do sistema.
-            Gostaria que eu explicasse mais algum detalhe ou fizesse alguma outra modificação?
-            """
-            label.textColor = .black
-            label.numberOfLines = 0
-            return label
-        }()
-        
-        lazy var labelContent: UILabel = {
-            let label = UILabel()
-            label.text = """
-            Essas mudanças garantem que seus labels respeitem a *Safe Area*, evitando que fiquem sob a barra de status, o notch (se houver) ou outros elementos da interface do sistema.
-            Gostaria que eu explicasse mais algum detalhe ou fizesse alguma outra modificação?
+    struct Screen: View {
+        @State var controller: Controller
+		@Namespace var animation
 
-            Essas mudanças garantem que seus labels respeitem a *Safe Area*, evitando que fiquem sob a barra de status, o notch (se houver) ou outros elementos da interface do sistema.
-            Gostaria que eu explicasse mais algum detalhe ou fizesse alguma outra modificação?
-            
-            Essas mudanças garantem que seus labels respeitem a *Safe Area*, evitando que fiquem sob a barra de status, o notch (se houver) ou outros elementos da interface do sistema.
-            Gostaria que eu explicasse mais algum detalhe ou fizesse alguma outra modificação?
-            """
-            label.textColor = .black
-            label.numberOfLines = 0
-            label.backgroundColor = .gray.withAlphaComponent(0.1)
-            return label
-        }()
-        
-        lazy var trailingContent: UIView = {
-            let view = UIView()
-            view.backgroundColor = .cyan
-            return view
-        }()
-        
-        lazy var buttonPresentAirbnb: AppStyle.ScaleButton = {
-            let label = UILabel()
-            label.text = "Present Airbnb"
-            label.font = .systemFont(ofSize: 16, weight: .bold)
-            label.textColor = .white
-            label.textAlignment = .center
-            
-            let button = AppStyle.ScaleButton()
-            button.setAction(handlerPresentAirbnb)
-            button.setCustomContent(label)
-            
-            button.backgroundColor = .black
-            button.layer.cornerRadius = 8
-
-            return button
-        }()
-        
-        lazy var buttonLogout: AppStyle.ScaleButton = {
-            let label = UILabel()
-            label.text = "Logout"
-            label.font = .systemFont(ofSize: 16, weight: .bold)
-            label.textColor = .white
-            label.textAlignment = .center
-            
-            let button = AppStyle.ScaleButton()
-            button.setAction(handlerLogout)
-            button.setCustomContent(label)
-            
-            button.backgroundColor = .black
-            button.layer.cornerRadius = 8
-
-            return button
-        }()
-
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            view.backgroundColor = .white
-            
-            observe { [weak self] in
-                guard let self else { return }
+        var body: some View {
+            GeometryReader {
+				let size = $0.size
+				let safeAreaInsets = $0.safeAreaInsets
                 
-                buttonLogout.isEnabled = !controller.isLoading
-                buttonPresentAirbnb.isEnabled = !controller.isLoading
-            }
-            
-            setupUI()
-        }
-        
-        private func setupUI() {
-            
-            view.addSubview(trailingContent)
-            view.addSubview(labelTitle)
-            view.addSubview(labelContent)
-            view.addSubview(buttonPresentAirbnb)
-            view.addSubview(buttonLogout)
+                ZStack(alignment: .top) {
+                    if controller.showReplay {
+                        Color.homeBackgroundReplay
+                            .ignoresSafeArea()
+                            .matchedGeometryEffect(id: "home.background", in: animation)
+                    } else {
+                        Color.white
+                            .ignoresSafeArea()
+                            .matchedGeometryEffect(id: "home.background", in: animation)
+                    }
 
-            labelTitle.snp.makeConstraints { make in
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-                make.left.equalTo(view.snp.left).offset(16)
-                make.right.equalTo(view.snp.right).offset(-16)
+                    VStack(spacing: 0) {
+                        if controller.showReplay {
+                            HeaderReplay()
+                                .transition(.opacity)
+                        }
+
+                        RoundedRectangle(cornerRadius: controller.showReplay ? 12 : 0)
+                            .fill(.white)
+                            .overlay(alignment: .top) {
+                                HomeView(isExpanded: !controller.showReplay)
+                                    .padding(.top, !controller.showReplay ? safeAreaInsets.top : 0)
+                            }
+                            .ignoresSafeArea(.container, edges: controller.showReplay ? .bottom : .all)
+                            .matchedGeometryEffect(id: "home.content", in: animation)
+                            .padding(.top, controller.showReplay ? 10 : 0)
+                            .frame(height: controller.showReplay ? nil : size.height)
+                    }
+                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: controller.showReplay)
+                }
             }
-            
-            labelContent.snp.makeConstraints { make in
-                make.top.equalTo(labelTitle.snp.bottom).offset(8)
-                make.left.equalTo(view.snp.left).offset(16)
-                make.right.equalTo(view.snp.right).offset(-16)
+        }
+
+        @ViewBuilder
+        private func HeaderReplay() -> some View {
+            Button {
+				Manager.Haptic.shared.playHaptic(for: .impact(.rigid))
+                controller.handleReplay()
+            } label: {
+				HStack(alignment: .center, spacing: 8) {
+					Image(systemName: "arrow.counterclockwise")
+					Text("Replay dos acamps")
+				}
             }
-            
-            buttonPresentAirbnb.snp.makeConstraints { make in
-                make.top.equalTo(labelContent.snp.bottom).offset(16)
-                make.left.equalTo(view.snp.left).offset(16)
-                make.right.equalTo(view.snp.right).offset(-16)
-                make.height.equalTo(54)
-            }
-            
-            buttonLogout.snp.makeConstraints { make in
-                make.top.equalTo(buttonPresentAirbnb.snp.bottom).offset(16)
-                make.left.equalTo(view.snp.left).offset(16)
-                make.right.equalTo(view.snp.right).offset(-16)
-                make.height.equalTo(54)
-            }
-            
-            trailingContent.snp.makeConstraints { make in
-                make.top.equalTo(view.snp.top)
-                make.trailing.equalTo(view.safeAreaLayoutGuide.snp.trailing)
-                make.height.equalTo(300)
-                make.width.equalTo(300)
+            .padding()
+            .foregroundStyle(.black)
+			.buttonStyle(.scale)
+        }
+
+        @ViewBuilder
+        private func HomeView(isExpanded: Bool) -> some View {
+            VStack(spacing: 16) {
+                // Barra de pesquisa
+                HStack {
+					Button {
+						Manager.Haptic.shared.playHaptic(for: .impact(.rigid))
+					} label: {
+						HStack {
+							Image(systemName: "magnifyingglass")
+								.foregroundStyle(.black)
+
+							Text("Comece sua busca")
+								.font(.subheadline)
+								.foregroundStyle(.black.opacity(0.6))
+
+							Spacer()
+						}
+						.padding(.horizontal, 16)
+						.padding(.vertical, 18)
+						.background(
+							RoundedRectangle(cornerRadius: 30)
+								.fill(Color.white)
+								.shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+						)
+					}
+					.buttonStyle(.scale)
+
+                    Button {
+						Manager.Haptic.shared.playHaptic(for: .impact(.rigid))
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
+                            .foregroundColor(.black)
+                            .padding(12)
+                            .background(
+                                Circle()
+                                    .fill(Color.white)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                            )
+                    }
+					.buttonStyle(.scale)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, isExpanded ? 0 : 16)
+                .matchedGeometryEffect(id: "home.header.card", in: animation)
+                
+                // Categorias
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 24) {
+                        CategoryItem(icon: "house.fill", title: "Casas pequenas", isSelected: true)
+                        CategoryItem(icon: "ticket", title: "Ingressos")
+                        CategoryItem(icon: "water.waves", title: "Beira do lago")
+                        CategoryItem(icon: "house", title: "Casas na árvore")
+                        CategoryItem(icon: "building.2", title: "Cidades")
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+                }
+                
+                Spacer()
             }
         }
         
-        @objc private func handlerPresentAirbnb() {
-            controller.presentAirbnb()
-        }
-        
-        @objc private func handlerLogout() {
-            controller.setLogout()
+        @ViewBuilder
+        private func CategoryItem(icon: String, title: String, isSelected: Bool = false) -> some View {
+            VStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(isSelected ? .black : .gray)
+                
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(isSelected ? .black : .gray)
+            }
+            .frame(height: 70)
+            .overlay(alignment: .bottom) {
+                if isSelected {
+                    Rectangle()
+                        .frame(height: 2)
+						.frame(maxWidth: .infinity)
+                        .foregroundColor(.black)
+                }
+            }
         }
     }
 }
-
 
 #Preview {
     Home.ViewController(controller: .init())
