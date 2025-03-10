@@ -48,11 +48,17 @@ extension Home {
 		@State private var isScrolling = false
 		
 		// Adicionando uma variável para controlar o anchor
-		@State private var scrollAnchor: UnitPoint = .center
+		@State private var scrollAnchor: UnitPoint = .leading
 		// Flag para controlar quando o anchor deve ser atualizado
 		@State private var isUserInitiatedScroll = false
 		// Contador para evitar loops infinitos
 		@State private var scrollChangeCount = 0
+		// Armazenar a velocidade da rolagem
+		@State private var scrollVelocity: CGFloat = 0
+		// Timestamp da última atualização para calcular velocidade
+		@State private var lastUpdateTime: Date = Date()
+		// Direção da última rolagem
+		@State private var lastScrollDirection: ScrollDirection = .none
 
 		var body: some View {
 			GeometryReader {
@@ -200,10 +206,12 @@ extension Home {
 						ForEach($controller.tabs) { $tab in
 							Button {
 								withAnimation(.snappy) {
-									// Quando o usuário toca em uma tab, usamos .center como anchor
-									scrollAnchor = .center
+									// Quando o usuário toca em uma tab, mantemos o anchor atual
+									// para evitar mudanças bruscas
 									isUserInitiatedScroll = false
 									scrollChangeCount = 0
+									scrollVelocity = 0
+									lastScrollDirection = .none
 									
 									controller.activeTab = tab.id
 									controller.tabBarScrollState = tab.id
@@ -247,24 +255,50 @@ extension Home {
 					// Apenas monitorando o offset sem tentar ajustar a posição
 					geo.contentOffset.x
 				} action: { oldValue, newValue in
+					// Calculando a velocidade da rolagem
+					let now = Date()
+					let timeDelta = now.timeIntervalSince(lastUpdateTime)
+					
+					if timeDelta > 0 {
+						// Calculando a velocidade em pontos por segundo
+						let newVelocity = abs(newValue - oldValue) / CGFloat(timeDelta)
+						
+						// Suavizando a velocidade com uma média ponderada
+						scrollVelocity = scrollVelocity * 0.7 + newVelocity * 0.3
+						
+						// Atualizando o timestamp
+						lastUpdateTime = now
+					}
+					
+					// Determinando a direção da rolagem
+					let currentDirection: ScrollDirection = oldValue < newValue ? .right : .left
+					
 					// Só atualizamos o anchor se for uma rolagem iniciada pelo usuário
 					// e se não estivermos em um loop
-					if abs(oldValue - newValue) > 5 && scrollChangeCount < 3 {
+					// Ajustando o limiar com base na velocidade da rolagem
+					let threshold = max(2, min(3 + scrollVelocity * 0.05, 10))
+					
+					if abs(oldValue - newValue) > threshold && scrollChangeCount < 5 {
 						// Incrementamos o contador para evitar loops
 						scrollChangeCount += 1
 						
 						// Marcamos que é uma rolagem iniciada pelo usuário
 						isUserInitiatedScroll = true
 						
+						// Verificamos se a direção mudou
+						let directionChanged = lastScrollDirection != .none && lastScrollDirection != currentDirection
+						
+						// Atualizamos a última direção
+						lastScrollDirection = currentDirection
+						
 						// Atualizamos o anchor com base na direção da rolagem
-						DispatchQueue.main.async {
-							if oldValue < newValue {
-								// Rolando para a direita, mostramos mais conteúdo à direita
-								scrollAnchor = .trailing
-							} else {
-								// Rolando para a esquerda, mostramos mais conteúdo à esquerda
-								scrollAnchor = .leading
-							}
+						// Sem atraso para maior fluidez
+						if currentDirection == .right {
+							// Rolando para a direita, mostramos mais conteúdo à direita
+							scrollAnchor = .trailing
+						} else {
+							// Rolando para a esquerda, mostramos mais conteúdo à esquerda
+							scrollAnchor = .leading
 						}
 						
 						// Registramos o último offset para debug
@@ -295,14 +329,10 @@ extension Home {
 				.safeAreaPadding(.horizontal, 15)
 				.onChange(of: controller.tabBarScrollState) { oldValue, newValue in
 					if let newValue {
-						// Quando a tab muda programaticamente, resetamos o anchor para .center
-						if !isUserInitiatedScroll {
-							scrollAnchor = .center
-						}
-						
 						// Resetamos a flag e o contador
 						isUserInitiatedScroll = false
 						scrollChangeCount = 0
+						scrollVelocity = 0
 						
 						withAnimation(.snappy) {
 							controller.activeTab = newValue
@@ -323,6 +353,13 @@ extension Home {
 		//            }
 		//        }
 	}
+}
+
+// Enum para representar a direção da rolagem
+enum ScrollDirection {
+	case none
+	case left
+	case right
 }
 
 enum Direction {
