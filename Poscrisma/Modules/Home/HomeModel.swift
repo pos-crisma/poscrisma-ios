@@ -10,12 +10,12 @@ import UIKit
 extension Home {
     struct Model { }
 
-    struct CategoryTab: Identifiable {
+    struct CategoryTab: Identifiable, Hashable {
         private(set) var id: Tab
         var size: CGSize = .zero
         var minX: CGFloat = .zero
 
-        enum Tab: String, CaseIterable {
+		enum Tab: String, CaseIterable, Hashable {
             case research = "Research"
             case development = "Development"
             case analytics = "Analytics"

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKitNavigation
+import CustomDump
 
 extension Home {
 	struct ViewController: View {
@@ -149,7 +150,9 @@ extension Home {
 						}
 						.scrollTargetLayout()
 						.rect { rect in
-							controller.progress = -rect.minX / size.width
+							let rawProgress = -rect.minX / size.width
+							let maxProgress = CGFloat(controller.tabs.count - 1)
+							controller.progress = min(max(0, rawProgress), maxProgress)
 						}
 					}
 					.scrollPosition(id: $controller.mainViewScrollState)
@@ -170,56 +173,72 @@ extension Home {
 
 		@ViewBuilder
 		private func CategoryTabView() -> some View {
-			ScrollView(.horizontal, showsIndicators: false) {
-				LazyHStack(spacing: 20) {
-					ForEach($controller.tabs) { $tab in
-						Button {
-							withAnimation(.snappy) {
-								controller.activeTab = tab.id
-								controller.tabBarScrollState = tab.id
-								controller.mainViewScrollState = tab.id
+			GeometryReader {
+				let size = $0.size
+				ScrollView(.horizontal) {
+					LazyHStack(spacing: 20) {
+						ForEach($controller.tabs) { $tab in
+							Button {
+								withAnimation(.snappy) {
+									controller.activeTab = tab.id
+									controller.tabBarScrollState = tab.id
+									controller.mainViewScrollState = tab.id
+								}
+							} label: {
+								Text(tab.id.rawValue)
+									.padding(.vertical, 12)
+									.padding(.horizontal, 4)
+									.foregroundStyle(controller.activeTab == tab.id ? .black : .gray)
+									.contentShape(.rect)
 							}
-						} label: {
-							Text(tab.id.rawValue)
-								.padding(.vertical, 12)
-								.foregroundStyle(controller.activeTab == tab.id ? .black : .gray)
-								.contentShape(.rect)
+							.buttonStyle(.plain)
+							.id(tab.id)
+							.rect { rect in
+								tab.size = rect.size
+								tab.minX = rect.minX
+							}
 						}
-						.buttonStyle(.plain)
-						.rect { rect in
-							tab.size = rect.size
-							tab.minX = rect.minX
+					}
+					.padding(.horizontal, 15)
+					.scrollTargetLayout()
+				}
+				.scrollPosition(
+					id: $controller.tabBarScrollState,
+					anchor: .center
+				)
+				.overlay(alignment: .bottom) {
+					ZStack(alignment: .leading) {
+						Rectangle()
+							.fill(.gray.opacity(0.3))
+							.frame(height: 1)
+
+						let inputRange = controller.tabs.indices.compactMap { return CGFloat($0) }
+						let outputRange = controller.tabs.compactMap { return $0.size.width }
+						let outputPositionRange = controller.tabs.compactMap { return $0.minX }
+						let indicatorWidth = controller.progress.interpolate(inputRange: inputRange, outputRange: outputRange)
+						let indicatorPosition = controller.progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
+
+						Rectangle()
+							.fill(.black)
+							.frame(width: indicatorWidth, height: 1.5)
+							.offset(x: indicatorPosition)
+					}
+				}
+				.safeAreaPadding(.horizontal, 15)
+//				.scrollIndicators(.hidden)
+				.scrollTargetBehavior(.viewAligned(limitBehavior: .never))
+				.scrollPosition(id: $controller.tabBarScrollState, anchor: .trailing)
+				.onChange(of: controller.tabBarScrollState) { oldValue, newValue in
+					if let newValue {
+						withAnimation(.snappy) {
+							controller.activeTab = newValue
+							controller.mainViewScrollState = newValue
+							
+							customDump(controller.activeTab, name: "controller.activeTab \(Date())")
 						}
 					}
 				}
 			}
-			.scrollPosition(
-				id: .init(
-                    get: { controller.tabBarScrollState },
-                    set: { _ in }
-			    ),
-				anchor: .center
-			)
-			.overlay(alignment: .bottom) {
-				ZStack(alignment: .leading) {
-					Rectangle()
-						.fill(.gray.opacity(0.3))
-						.frame(height: 1)
-
-					let inputRange = controller.tabs.indices.compactMap { return CGFloat($0) }
-					let outputRange = controller.tabs.compactMap { return $0.size.width }
-					let outputPositionRange = controller.tabs.compactMap { return $0.minX }
-					let indicatorWidth = controller.progress.interpolate(inputRange: inputRange, outputRange: outputRange)
-					let indicatorPosition = controller.progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
-
-					Rectangle()
-						.fill(.black)
-						.frame(width: indicatorWidth, height: 1.5)
-						.offset(x: indicatorPosition)
-				}
-			}
-			.safeAreaPadding(.horizontal, 15)
-			.scrollIndicators(.hidden)
 			.frame(height: 60)
 		}
 
