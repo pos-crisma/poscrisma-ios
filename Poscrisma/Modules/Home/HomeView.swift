@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
-import UIKitNavigation
+import UIKit
 import CustomDump
+import UIKitNavigation
 
 extension Home {
 	struct ViewController: View {
 		@State var controller: Controller
+
+
+		init(controller: Controller) {
+			UIScrollView.appearance().bounces = false // <-- Disable bounce
+
+			self.controller = controller
+		}
 
 		var body: some View {
 			Screen(controller: controller)
@@ -33,6 +41,18 @@ extension Home {
 	struct Screen: View {
 		@State var controller: Controller
 		@Namespace var animation
+		
+		// Usando o novo ScrollTransition do iOS 18 para controlar a rolagem
+		@State private var scrollID = UUID()
+		@State private var lastScrollOffset: CGFloat = 0
+		@State private var isScrolling = false
+		
+		// Adicionando uma variável para controlar o anchor
+		@State private var scrollAnchor: UnitPoint = .center
+		// Flag para controlar quando o anchor deve ser atualizado
+		@State private var isUserInitiatedScroll = false
+		// Contador para evitar loops infinitos
+		@State private var scrollChangeCount = 0
 
 		var body: some View {
 			GeometryReader {
@@ -176,10 +196,15 @@ extension Home {
 			GeometryReader {
 				let size = $0.size
 				ScrollView(.horizontal) {
-					LazyHStack(spacing: 20) {
+					HStack(spacing: 20) {
 						ForEach($controller.tabs) { $tab in
 							Button {
 								withAnimation(.snappy) {
+									// Quando o usuário toca em uma tab, usamos .center como anchor
+									scrollAnchor = .center
+									isUserInitiatedScroll = false
+									scrollChangeCount = 0
+									
 									controller.activeTab = tab.id
 									controller.tabBarScrollState = tab.id
 									controller.mainViewScrollState = tab.id
@@ -190,6 +215,16 @@ extension Home {
 									.padding(.horizontal, 4)
 									.foregroundStyle(controller.activeTab == tab.id ? .black : .gray)
 									.contentShape(.rect)
+									// Usando ScrollTransition para animar os itens durante a rolagem
+									.scrollTransition(.interactive) { content, phase in
+										content
+											.scaleEffect(
+												phase.isIdentity ? 1.0 : 0.9
+											)
+											.opacity(
+												phase.isIdentity ? 1.0 : 0.7
+											)
+									}
 							}
 							.buttonStyle(.plain)
 							.id(tab.id)
@@ -202,10 +237,43 @@ extension Home {
 					.padding(.horizontal, 15)
 					.scrollTargetLayout()
 				}
+				// Usando scrollPosition com anchor dinâmico
 				.scrollPosition(
 					id: $controller.tabBarScrollState,
-					anchor: .center
+					anchor: scrollAnchor
 				)
+				// Usando o novo recurso do iOS 18 para monitorar a geometria de rolagem
+				.onScrollGeometryChange(for: CGFloat.self) { geo in
+					// Apenas monitorando o offset sem tentar ajustar a posição
+					geo.contentOffset.x
+				} action: { oldValue, newValue in
+					// Só atualizamos o anchor se for uma rolagem iniciada pelo usuário
+					// e se não estivermos em um loop
+					if abs(oldValue - newValue) > 5 && scrollChangeCount < 3 {
+						// Incrementamos o contador para evitar loops
+						scrollChangeCount += 1
+						
+						// Marcamos que é uma rolagem iniciada pelo usuário
+						isUserInitiatedScroll = true
+						
+						// Atualizamos o anchor com base na direção da rolagem
+						DispatchQueue.main.async {
+							if oldValue < newValue {
+								// Rolando para a direita, mostramos mais conteúdo à direita
+								scrollAnchor = .trailing
+							} else {
+								// Rolando para a esquerda, mostramos mais conteúdo à esquerda
+								scrollAnchor = .leading
+							}
+						}
+						
+						// Registramos o último offset para debug
+						lastScrollOffset = newValue
+					}
+				}
+				.scrollTargetBehavior(.viewAligned)
+				.scrollIndicators(.hidden)
+				.scrollClipDisabled(true)
 				.overlay(alignment: .bottom) {
 					ZStack(alignment: .leading) {
 						Rectangle()
@@ -225,11 +293,17 @@ extension Home {
 					}
 				}
 				.safeAreaPadding(.horizontal, 15)
-//				.scrollIndicators(.hidden)
-				.scrollTargetBehavior(.viewAligned(limitBehavior: .never))
-				.scrollPosition(id: $controller.tabBarScrollState, anchor: .trailing)
 				.onChange(of: controller.tabBarScrollState) { oldValue, newValue in
 					if let newValue {
+						// Quando a tab muda programaticamente, resetamos o anchor para .center
+						if !isUserInitiatedScroll {
+							scrollAnchor = .center
+						}
+						
+						// Resetamos a flag e o contador
+						isUserInitiatedScroll = false
+						scrollChangeCount = 0
+						
 						withAnimation(.snappy) {
 							controller.activeTab = newValue
 							controller.mainViewScrollState = newValue
@@ -251,6 +325,8 @@ extension Home {
 	}
 }
 
-#Preview {
-	Home.ViewController(controller: .init())
+enum Direction {
+	case none
+	case left
+	case right
 }
